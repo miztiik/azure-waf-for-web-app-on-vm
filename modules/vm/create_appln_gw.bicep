@@ -1,6 +1,6 @@
 // SET MODULE DATE
 param module_metadata object = {
-  module_last_updated: '2023-05-19'
+  module_last_updated : '2023-05-19'
   owner: 'miztiik@github'
 }
 
@@ -10,17 +10,18 @@ param tags object
 
 param logAnalyticsPayGWorkspaceId string
 
+
 param vnetName string
 
 var appln_gw_front_end_name = 'm-front-end'
 var appln_gw_back_end_pool_name = 'm-back-end-pool'
 
 
-
 // Get VNet Reference
 resource r_vnet 'Microsoft.Network/virtualNetworks@2021-02-01' existing = {
   name: vnetName
 }
+
 
 var appln_gw_name = replace('${applnGwParams.applnGwNamePrefix}-${deploymentParams.loc_short_code}-appln-gw-${deploymentParams.enterprise_name_suffix}-${deploymentParams.global_uniqueness}', '_', '-')
 
@@ -249,6 +250,7 @@ resource r_appln_gw_diag 'Microsoft.Insights/diagnosticSettings@2021-05-01-previ
     ]
   }
 }
+
 
 // OUTPUTS
 output module_metadata object = module_metadata
