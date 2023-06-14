@@ -1,0 +1,19 @@
+# DO NOT include azure-functions-worker in this file
+# The Python Worker is managed by Azure Functions platform
+# Manually managing azure-functions-worker may cause unexpected issues
+
+azure-functions
+azure-identity
+azure-appconfiguration
+azure-storage-blob
+azure-servicebus
+azure-cosmos
+azure-eventhub
+azure-eventhub-checkpointstoreblob
+
+asyncio
+aiohttp
+
+azure-eventhub-checkpointstoreblob-aio
+azure-identity
+

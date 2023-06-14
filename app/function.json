@@ -1,0 +1,25 @@
+{
+  "scriptFile": "__init__.py",
+  "disabled": false,
+  "bindings": [
+      {
+          "type": "blob",
+          "name": "miztProc",
+          "direction": "in",
+          "path": "{data.url}",
+          "connection": "WAREHOUSE_STORAGE"
+        },
+        {
+          "type": "blob",
+          "name": "outputBlob",
+          "direction": "out",
+          "path": "%WAREHOUSE_STORAGE_CONTAINER%/processed/{DateTime}_{data.eTag}.json",
+          "connection": "WAREHOUSE_STORAGE"
+        },
+        {
+          "type": "eventGridTrigger",
+          "name": "event",
+          "direction": "in"
+        }
+  ]
+}

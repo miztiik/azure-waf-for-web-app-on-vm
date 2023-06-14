@@ -1,0 +1,22 @@
+<policies>
+    <inbound>
+        <base />
+        <!-- <set-backend-service id="apim-generated-policy" backend-id="myfunctionapp" /> -->
+        <set-backend-service backend-id="store-events-producer-function" />
+        <rate-limit-by-key calls="10" renewal-period="60" counter-key="@(context.Request.IpAddress)" increment-condition="@(context.Response.StatusCode == 200)" remaining-calls-variable-name="remainingCallsPerIP" />
+        <set-header name="miztiik-automation-apim-inserted" exists-action="override">
+            <value>yes</value>
+        </set-header>
+        <set-variable name="IsMobile" value="@(context.Request.Headers.GetValueOrDefault("User-Agent","").Contains("iPad") || context.Request.Headers.GetValueOrDefault("User-Agent","").Contains("iPhone"))" />
+<!-- <set-backend-service base-url="{storeEventsProducerBackendUrl}" backend-id="{storeEventsProducerBackendId}" /> -->
+</inbound>
+<backend>
+<base />
+</backend>
+<outbound>
+<base />
+</outbound>
+<on-error>
+<base />
+</on-error>
+</policies>

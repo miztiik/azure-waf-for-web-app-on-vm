@@ -1,0 +1,2563 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.18.4.5664",
+      "templateHash": "17751583149034707720"
+    }
+  },
+  "parameters": {
+    "deploymentParams": {
+      "type": "object"
+    },
+    "identityParams": {
+      "type": "object"
+    },
+    "storageAccountParams": {
+      "type": "object"
+    },
+    "logAnalyticsWorkspaceParams": {
+      "type": "object"
+    },
+    "vnetParams": {
+      "type": "object"
+    },
+    "vmParams": {
+      "type": "object"
+    },
+    "applnGwParams": {
+      "type": "object"
+    },
+    "funcParams": {
+      "type": "object"
+    },
+    "cosmosDbParams": {
+      "type": "object"
+    },
+    "dceParams": {
+      "type": "object"
+    },
+    "brandTags": {
+      "type": "object"
+    },
+    "dateNow": {
+      "type": "string",
+      "defaultValue": "[utcNow('yyyy-MM-dd-hh-mm')]"
+    },
+    "tags": {
+      "type": "object",
+      "defaultValue": "[union(parameters('brandTags'), createObject('last_deployed', parameters('dateNow')))]"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "[format('{0}_{1}_{2}_uami', parameters('deploymentParams').enterprise_name_suffix, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness)]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "deploymentParams": {
+            "value": "[parameters('deploymentParams')]"
+          },
+          "identityParams": {
+            "value": "[parameters('identityParams')]"
+          },
+          "tags": {
+            "value": "[parameters('tags')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.18.4.5664",
+              "templateHash": "6123646171713334277"
+            }
+          },
+          "parameters": {
+            "module_metadata": {
+              "type": "object",
+              "defaultValue": {
+                "module_last_updated": "2023-06-05",
+                "owner": "miztiik@github"
+              }
+            },
+            "deploymentParams": {
+              "type": "object"
+            },
+            "identityParams": {
+              "type": "object"
+            },
+            "tags": {
+              "type": "object"
+            }
+          },
+          "variables": {
+            "_prebaked_uami_name_prefix": "[format('{0}_{1}_{2}', parameters('identityParams').namePrefix, parameters('deploymentParams').enterprise_name_suffix, parameters('deploymentParams').global_uniqueness)]"
+          },
+          "resources": [
+            {
+              "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+              "apiVersion": "2023-01-31",
+              "name": "[format('{0}_vm', variables('_prebaked_uami_name_prefix'))]",
+              "location": "[parameters('deploymentParams').location]",
+              "tags": "[parameters('tags')]",
+              "metadata": {
+                "description": "Create User-Assigned Managed Identity - For VMs"
+              }
+            },
+            {
+              "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+              "apiVersion": "2023-01-31",
+              "name": "[format('{0}_func', variables('_prebaked_uami_name_prefix'))]",
+              "location": "[parameters('deploymentParams').location]",
+              "tags": "[parameters('tags')]",
+              "metadata": {
+                "description": "Create User-Assigned Managed Identity - For Functions"
+              }
+            }
+          ],
+          "outputs": {
+            "module_metadata": {
+              "type": "object",
+              "value": "[parameters('module_metadata')]"
+            },
+            "uami_name_vm": {
+              "type": "string",
+              "value": "[format('{0}_vm', variables('_prebaked_uami_name_prefix'))]"
+            },
+            "uami_name_func": {
+              "type": "string",
+              "value": "[format('{0}_func', variables('_prebaked_uami_name_prefix'))]"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "[format('{0}_{1}_{2}_cosmos_db', parameters('cosmosDbParams').cosmosDbNamePrefix, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness)]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "deploymentParams": {
+            "value": "[parameters('deploymentParams')]"
+          },
+          "cosmosDbParams": {
+            "value": "[parameters('cosmosDbParams')]"
+          },
+          "tags": {
+            "value": "[parameters('tags')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.18.4.5664",
+              "templateHash": "939944078024847240"
+            }
+          },
+          "parameters": {
+            "module_metadata": {
+              "type": "object",
+              "defaultValue": {
+                "module_last_updated": "2023-05-29",
+                "owner": "miztiik@github"
+              }
+            },
+            "deploymentParams": {
+              "type": "object"
+            },
+            "tags": {
+              "type": "object"
+            },
+            "cosmosDbParams": {
+              "type": "object"
+            }
+          },
+          "variables": {
+            "cosmos_db_accnt_name": "[replace(format('{0}-{1}-db-account-{2}', parameters('deploymentParams').enterprise_name_suffix, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness), '_', '-')]",
+            "databaseName": "[format('{0}-db-{1}', parameters('cosmosDbParams').cosmosDbNamePrefix, parameters('deploymentParams').global_uniqueness)]",
+            "containerName": "[format('{0}-container-{1}', parameters('cosmosDbParams').cosmosDbNamePrefix, parameters('deploymentParams').global_uniqueness)]"
+          },
+          "resources": [
+            {
+              "type": "Microsoft.DocumentDB/databaseAccounts",
+              "apiVersion": "2022-08-15",
+              "name": "[variables('cosmos_db_accnt_name')]",
+              "location": "[parameters('deploymentParams').location]",
+              "kind": "GlobalDocumentDB",
+              "tags": "[parameters('tags')]",
+              "properties": {
+                "publicNetworkAccess": "Enabled",
+                "databaseAccountOfferType": "Standard",
+                "enableAutomaticFailover": true,
+                "consistencyPolicy": {
+                  "defaultConsistencyLevel": "Session"
+                },
+                "locations": [
+                  {
+                    "locationName": "[parameters('deploymentParams').location]",
+                    "isZoneRedundant": false
+                  }
+                ],
+                "backupPolicy": {
+                  "type": "Continuous"
+                },
+                "capabilities": [
+                  {
+                    "name": "EnableServerless"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+              "apiVersion": "2021-06-15",
+              "name": "[format('{0}/{1}', variables('cosmos_db_accnt_name'), variables('databaseName'))]",
+              "properties": {
+                "resource": {
+                  "id": "[variables('databaseName')]"
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.DocumentDB/databaseAccounts', variables('cosmos_db_accnt_name'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
+              "apiVersion": "2022-08-15",
+              "name": "[format('{0}/{1}/{2}', variables('cosmos_db_accnt_name'), variables('databaseName'), variables('containerName'))]",
+              "properties": {
+                "resource": {
+                  "id": "[variables('containerName')]",
+                  "partitionKey": {
+                    "paths": [
+                      "/id"
+                    ],
+                    "kind": "Hash"
+                  },
+                  "indexingPolicy": {
+                    "indexingMode": "consistent",
+                    "includedPaths": [
+                      {
+                        "path": "/*"
+                      }
+                    ],
+                    "excludedPaths": [
+                      {
+                        "path": "/_etag/?"
+                      }
+                    ]
+                  },
+                  "conflictResolutionPolicy": {
+                    "mode": "LastWriterWins",
+                    "conflictResolutionPath": "/_ts"
+                  }
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.DocumentDB/databaseAccounts/sqlDatabases', variables('cosmos_db_accnt_name'), variables('databaseName'))]"
+              ]
+            }
+          ],
+          "outputs": {
+            "module_metadata": {
+              "type": "object",
+              "value": "[parameters('module_metadata')]"
+            },
+            "cosmos_db_accnt_name": {
+              "type": "string",
+              "value": "[variables('cosmos_db_accnt_name')]"
+            },
+            "cosmos_db_name": {
+              "type": "string",
+              "value": "[variables('databaseName')]"
+            },
+            "cosmos_db_container_name": {
+              "type": "string",
+              "value": "[variables('containerName')]"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "[format('{0}_{1}_{2}_la', parameters('logAnalyticsWorkspaceParams').workspaceName, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness)]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "deploymentParams": {
+            "value": "[parameters('deploymentParams')]"
+          },
+          "logAnalyticsWorkspaceParams": {
+            "value": "[parameters('logAnalyticsWorkspaceParams')]"
+          },
+          "tags": {
+            "value": "[parameters('tags')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.18.4.5664",
+              "templateHash": "3211974735333040787"
+            }
+          },
+          "parameters": {
+            "module_metadata": {
+              "type": "object",
+              "defaultValue": {
+                "module_last_updated": "2023-05-21",
+                "owner": "miztiik@github"
+              }
+            },
+            "deploymentParams": {
+              "type": "object"
+            },
+            "logAnalyticsWorkspaceParams": {
+              "type": "object"
+            },
+            "tags": {
+              "type": "object"
+            }
+          },
+          "resources": [
+            {
+              "condition": "[equals(parameters('logAnalyticsWorkspaceParams').commitTier, false())]",
+              "type": "Microsoft.OperationalInsights/workspaces",
+              "apiVersion": "2020-08-01",
+              "name": "[format('{0}-{1}-payGTier-{2}', parameters('logAnalyticsWorkspaceParams').workspaceName, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness)]",
+              "location": "[parameters('deploymentParams').location]",
+              "tags": "[parameters('tags')]",
+              "properties": {
+                "retentionInDays": "[parameters('logAnalyticsWorkspaceParams').retentionInDays]",
+                "sku": {
+                  "name": "PerGB2018"
+                },
+                "workspaceCapping": {
+                  "dailyQuotaGb": "[parameters('logAnalyticsWorkspaceParams').dailyQuotaGb]"
+                },
+                "publicNetworkAccessForIngestion": "Enabled",
+                "publicNetworkAccessForQuery": "Enabled"
+              }
+            },
+            {
+              "condition": "[equals(parameters('logAnalyticsWorkspaceParams').commitTier, true())]",
+              "type": "Microsoft.OperationalInsights/workspaces",
+              "apiVersion": "2022-10-01",
+              "name": "[format('{0}-{1}-commitTier-{2}', parameters('logAnalyticsWorkspaceParams').workspaceName, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness)]",
+              "location": "[parameters('deploymentParams').location]",
+              "tags": "[parameters('tags')]",
+              "properties": {
+                "sku": {
+                  "name": "CapacityReservation",
+                  "capacityReservationLevel": 100
+                }
+              }
+            },
+            {
+              "type": "Microsoft.OperationalInsights/workspaces/tables",
+              "apiVersion": "2022-10-01",
+              "name": "[format('{0}/{1}', format('{0}-{1}-payGTier-{2}', parameters('logAnalyticsWorkspaceParams').workspaceName, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness), format('{0}{1}_CL', parameters('logAnalyticsWorkspaceParams').storeEventsCustomTableName, parameters('deploymentParams').global_uniqueness))]",
+              "properties": {
+                "plan": "Analytics",
+                "retentionInDays": -1,
+                "schema": {
+                  "description": "Store order events custom table",
+                  "displayName": "DOESNT-SEEM-TO-WORK-STORE-EVENTS-0",
+                  "name": "[format('{0}{1}_CL', parameters('logAnalyticsWorkspaceParams').storeEventsCustomTableName, parameters('deploymentParams').global_uniqueness)]",
+                  "columns": [
+                    {
+                      "name": "TimeGenerated",
+                      "type": "datetime"
+                    },
+                    {
+                      "name": "RawData",
+                      "type": "string"
+                    },
+                    {
+                      "name": "request_id",
+                      "type": "string"
+                    },
+                    {
+                      "name": "event_type",
+                      "type": "string"
+                    },
+                    {
+                      "name": "store_id",
+                      "displayName": "store_id",
+                      "description": "The Id of the store placing the Order",
+                      "type": "int"
+                    },
+                    {
+                      "name": "cust_id",
+                      "type": "int"
+                    },
+                    {
+                      "name": "category",
+                      "type": "string"
+                    },
+                    {
+                      "name": "sku",
+                      "type": "int"
+                    },
+                    {
+                      "name": "price",
+                      "type": "real"
+                    },
+                    {
+                      "name": "qty",
+                      "type": "int"
+                    },
+                    {
+                      "name": "discount",
+                      "type": "real"
+                    },
+                    {
+                      "name": "gift_wrap",
+                      "type": "boolean"
+                    },
+                    {
+                      "name": "variant",
+                      "description": "Product Variety",
+                      "type": "string"
+                    },
+                    {
+                      "name": "priority_shipping",
+                      "description": "Priority Shipping requested",
+                      "type": "boolean"
+                    },
+                    {
+                      "name": "contact_me",
+                      "description": "Miztiik Automation Brand Experience Store",
+                      "displayName": "contact_me",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', format('{0}-{1}-payGTier-{2}', parameters('logAnalyticsWorkspaceParams').workspaceName, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness))]"
+              ]
+            },
+            {
+              "type": "Microsoft.OperationalInsights/workspaces/tables",
+              "apiVersion": "2022-10-01",
+              "name": "[format('{0}/{1}', format('{0}-{1}-payGTier-{2}', parameters('logAnalyticsWorkspaceParams').workspaceName, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness), format('{0}{1}_CL', parameters('logAnalyticsWorkspaceParams').automationEventsCustomTableName, parameters('deploymentParams').global_uniqueness))]",
+              "properties": {
+                "plan": "Analytics",
+                "retentionInDays": -1,
+                "schema": {
+                  "description": "Miztiik Automation Events",
+                  "displayName": "DOESNT-SEEM-TO-WORK-AUTOMATION-EVENTS-1",
+                  "name": "[format('{0}{1}_CL', parameters('logAnalyticsWorkspaceParams').automationEventsCustomTableName, parameters('deploymentParams').global_uniqueness)]",
+                  "columns": [
+                    {
+                      "name": "TimeGenerated",
+                      "type": "datetime"
+                    },
+                    {
+                      "name": "RawData",
+                      "type": "string"
+                    },
+                    {
+                      "name": "request_id",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', format('{0}-{1}-payGTier-{2}', parameters('logAnalyticsWorkspaceParams').workspaceName, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness))]"
+              ]
+            },
+            {
+              "type": "Microsoft.OperationalInsights/workspaces/tables",
+              "apiVersion": "2022-10-01",
+              "name": "[format('{0}/{1}', format('{0}-{1}-payGTier-{2}', parameters('logAnalyticsWorkspaceParams').workspaceName, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness), format('{0}{1}_CL', parameters('logAnalyticsWorkspaceParams').managedRunCmdCustomTableName, parameters('deploymentParams').global_uniqueness))]",
+              "properties": {
+                "plan": "Analytics",
+                "retentionInDays": -1,
+                "schema": {
+                  "description": "Miztiik Run Command Automation Events",
+                  "displayName": "DOESNT-SEEM-TO-WORK-AUTOMATION-EVENTS-2",
+                  "name": "[format('{0}{1}_CL', parameters('logAnalyticsWorkspaceParams').managedRunCmdCustomTableName, parameters('deploymentParams').global_uniqueness)]",
+                  "columns": [
+                    {
+                      "name": "TimeGenerated",
+                      "type": "datetime"
+                    },
+                    {
+                      "name": "RawData",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', format('{0}-{1}-payGTier-{2}', parameters('logAnalyticsWorkspaceParams').workspaceName, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness))]"
+              ]
+            }
+          ],
+          "outputs": {
+            "module_metadata": {
+              "type": "object",
+              "value": "[parameters('module_metadata')]"
+            },
+            "logAnalyticsPayGWorkspaceId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.OperationalInsights/workspaces', format('{0}-{1}-payGTier-{2}', parameters('logAnalyticsWorkspaceParams').workspaceName, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness))]"
+            },
+            "logAnalyticsPayGWorkspaceName": {
+              "type": "string",
+              "value": "[format('{0}-{1}-payGTier-{2}', parameters('logAnalyticsWorkspaceParams').workspaceName, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness)]"
+            },
+            "logAnalyticsCommitTierWorkspaceId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.OperationalInsights/workspaces', format('{0}-{1}-commitTier-{2}', parameters('logAnalyticsWorkspaceParams').workspaceName, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness))]"
+            },
+            "storeEventsCustomTableNamePrefix": {
+              "type": "string",
+              "value": "[format('{0}{1}', parameters('logAnalyticsWorkspaceParams').storeEventsCustomTableName, parameters('deploymentParams').global_uniqueness)]"
+            },
+            "storeEventsCustomTableName": {
+              "type": "string",
+              "value": "[format('{0}{1}_CL', parameters('logAnalyticsWorkspaceParams').storeEventsCustomTableName, parameters('deploymentParams').global_uniqueness)]"
+            },
+            "automationEventsCustomTableNamePrefix": {
+              "type": "string",
+              "value": "[format('{0}{1}', parameters('logAnalyticsWorkspaceParams').automationEventsCustomTableName, parameters('deploymentParams').global_uniqueness)]"
+            },
+            "automationEventsCustomTableName": {
+              "type": "string",
+              "value": "[format('{0}{1}_CL', parameters('logAnalyticsWorkspaceParams').automationEventsCustomTableName, parameters('deploymentParams').global_uniqueness)]"
+            },
+            "managedRunCmdCustomTableNamePrefix": {
+              "type": "string",
+              "value": "[format('{0}{1}', parameters('logAnalyticsWorkspaceParams').managedRunCmdCustomTableName, parameters('deploymentParams').global_uniqueness)]"
+            },
+            "managedRunCmdCustomTableName": {
+              "type": "string",
+              "value": "[format('{0}{1}_CL', parameters('logAnalyticsWorkspaceParams').managedRunCmdCustomTableName, parameters('deploymentParams').global_uniqueness)]"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "[format('{0}_{1}_{2}_sa', parameters('storageAccountParams').storageAccountNamePrefix, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness)]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "deploymentParams": {
+            "value": "[parameters('deploymentParams')]"
+          },
+          "storageAccountParams": {
+            "value": "[parameters('storageAccountParams')]"
+          },
+          "funcParams": {
+            "value": "[parameters('funcParams')]"
+          },
+          "tags": {
+            "value": "[parameters('tags')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.18.4.5664",
+              "templateHash": "9831604754677873911"
+            }
+          },
+          "parameters": {
+            "module_metadata": {
+              "type": "object",
+              "defaultValue": {
+                "module_last_updated": "2023-05-26",
+                "owner": "miztiik@github"
+              }
+            },
+            "deploymentParams": {
+              "type": "object"
+            },
+            "storageAccountParams": {
+              "type": "object"
+            },
+            "funcParams": {
+              "type": "object"
+            },
+            "tags": {
+              "type": "object",
+              "defaultValue": "[resourceGroup().tags]"
+            }
+          },
+          "variables": {
+            "uniqStr": "[substring(uniqueString(resourceGroup().id), 0, 6)]",
+            "saName": "[format('{0}{1}{2}{3}', parameters('storageAccountParams').storageAccountNamePrefix, parameters('deploymentParams').loc_short_code, variables('uniqStr'), parameters('deploymentParams').global_uniqueness)]",
+            "uniqStr_1": "[substring(uniqueString(resourceGroup().id), 0, 6)]",
+            "saName_1": "[format('{0}{1}{2}', parameters('funcParams').funcStorageAccountNamePrefix, variables('uniqStr_1'), parameters('deploymentParams').global_uniqueness)]"
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Storage/storageAccounts",
+              "apiVersion": "2022-05-01",
+              "name": "[variables('saName')]",
+              "location": "[parameters('deploymentParams').location]",
+              "tags": "[parameters('tags')]",
+              "sku": {
+                "name": "[format('{0}', parameters('storageAccountParams').fault_tolerant_sku)]"
+              },
+              "kind": "[format('{0}', parameters('storageAccountParams').kind)]",
+              "properties": {
+                "minimumTlsVersion": "[format('{0}', parameters('storageAccountParams').minimumTlsVersion)]",
+                "allowBlobPublicAccess": "[parameters('storageAccountParams').allowBlobPublicAccess]",
+                "defaultToOAuthAuthentication": true,
+                "supportsHttpsTrafficOnly": true,
+                "networkAcls": {
+                  "bypass": "AzureServices",
+                  "defaultAction": "Allow"
+                },
+                "encryption": {
+                  "services": {
+                    "file": {
+                      "keyType": "Account",
+                      "enabled": true
+                    },
+                    "blob": {
+                      "keyType": "Account",
+                      "enabled": true
+                    }
+                  },
+                  "keySource": "Microsoft.Storage"
+                },
+                "accessTier": "Hot"
+              }
+            },
+            {
+              "type": "Microsoft.Storage/storageAccounts",
+              "apiVersion": "2022-05-01",
+              "name": "[variables('saName_1')]",
+              "location": "[parameters('deploymentParams').location]",
+              "tags": "[parameters('tags')]",
+              "sku": {
+                "name": "[format('{0}', parameters('storageAccountParams').fault_tolerant_sku)]"
+              },
+              "kind": "[format('{0}', parameters('storageAccountParams').kind)]",
+              "properties": {
+                "minimumTlsVersion": "[format('{0}', parameters('storageAccountParams').minimumTlsVersion)]",
+                "allowBlobPublicAccess": "[parameters('storageAccountParams').allowBlobPublicAccess]",
+                "defaultToOAuthAuthentication": true,
+                "supportsHttpsTrafficOnly": true,
+                "networkAcls": {
+                  "bypass": "AzureServices",
+                  "defaultAction": "Allow"
+                },
+                "encryption": {
+                  "services": {
+                    "file": {
+                      "keyType": "Account",
+                      "enabled": true
+                    },
+                    "blob": {
+                      "keyType": "Account",
+                      "enabled": true
+                    }
+                  },
+                  "keySource": "Microsoft.Storage"
+                },
+                "accessTier": "Hot"
+              }
+            }
+          ],
+          "outputs": {
+            "module_metadata": {
+              "type": "object",
+              "value": "[parameters('module_metadata')]"
+            },
+            "saName": {
+              "type": "string",
+              "value": "[variables('saName')]"
+            },
+            "saPrimaryEndpointsBlob": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Storage/storageAccounts', variables('saName')), '2022-05-01').primaryEndpoints.blob]"
+            },
+            "saPrimaryEndpoints": {
+              "type": "object",
+              "value": "[reference(resourceId('Microsoft.Storage/storageAccounts', variables('saName')), '2022-05-01').primaryEndpoints]"
+            },
+            "saName_1": {
+              "type": "string",
+              "value": "[variables('saName_1')]"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "[format('{0}_{1}_{2}_blob', parameters('storageAccountParams').storageAccountNamePrefix, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness)]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "deploymentParams": {
+            "value": "[parameters('deploymentParams')]"
+          },
+          "storageAccountParams": {
+            "value": "[parameters('storageAccountParams')]"
+          },
+          "storageAccountName": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}_{1}_{2}_sa', parameters('storageAccountParams').storageAccountNamePrefix, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness)), '2022-09-01').outputs.saName.value]"
+          },
+          "storageAccountName_1": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}_{1}_{2}_sa', parameters('storageAccountParams').storageAccountNamePrefix, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness)), '2022-09-01').outputs.saName_1.value]"
+          },
+          "logAnalyticsWorkspaceId": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}_{1}_{2}_la', parameters('logAnalyticsWorkspaceParams').workspaceName, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness)), '2022-09-01').outputs.logAnalyticsPayGWorkspaceId.value]"
+          },
+          "enableDiagnostics": {
+            "value": false
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.18.4.5664",
+              "templateHash": "15568782707485487793"
+            }
+          },
+          "parameters": {
+            "module_metadata": {
+              "type": "object",
+              "defaultValue": {
+                "module_last_updated": "2023-05-23",
+                "owner": "miztiik@github"
+              }
+            },
+            "deploymentParams": {
+              "type": "object"
+            },
+            "storageAccountParams": {
+              "type": "object"
+            },
+            "storageAccountName": {
+              "type": "string"
+            },
+            "enableDiagnostics": {
+              "type": "bool",
+              "defaultValue": false
+            },
+            "logAnalyticsWorkspaceId": {
+              "type": "string"
+            },
+            "storageAccountName_1": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Storage/storageAccounts/blobServices",
+              "apiVersion": "2021-06-01",
+              "name": "[format('{0}/{1}', parameters('storageAccountName'), 'default')]",
+              "properties": {
+                "cors": {
+                  "corsRules": []
+                }
+              }
+            },
+            {
+              "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+              "apiVersion": "2021-04-01",
+              "name": "[format('{0}/{1}/{2}', parameters('storageAccountName'), 'default', format('{0}-blob-{1}', parameters('storageAccountParams').blobNamePrefix, parameters('deploymentParams').global_uniqueness))]",
+              "properties": {
+                "publicAccess": "None"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccountName'), 'default')]"
+              ]
+            },
+            {
+              "condition": "[parameters('enableDiagnostics')]",
+              "type": "Microsoft.Insights/diagnosticSettings",
+              "apiVersion": "2021-05-01-preview",
+              "scope": "[format('Microsoft.Storage/storageAccounts/{0}', parameters('storageAccountName'))]",
+              "name": "[format('{0}-Diaglogs', parameters('storageAccountName'))]",
+              "properties": {
+                "workspaceId": "[parameters('logAnalyticsWorkspaceId')]",
+                "logs": [
+                  {
+                    "category": "StorageWrite",
+                    "enabled": true
+                  }
+                ],
+                "metrics": [
+                  {
+                    "category": "Transaction",
+                    "enabled": true
+                  }
+                ]
+              }
+            },
+            {
+              "type": "Microsoft.Storage/storageAccounts/blobServices",
+              "apiVersion": "2021-06-01",
+              "name": "[format('{0}/{1}', parameters('storageAccountName_1'), 'default')]",
+              "properties": {
+                "cors": {
+                  "corsRules": []
+                }
+              }
+            }
+          ],
+          "outputs": {
+            "module_metadata": {
+              "type": "object",
+              "value": "[parameters('module_metadata')]"
+            },
+            "blobContainerId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', parameters('storageAccountName'), 'default', format('{0}-blob-{1}', parameters('storageAccountParams').blobNamePrefix, parameters('deploymentParams').global_uniqueness))]"
+            },
+            "blobContainerName": {
+              "type": "string",
+              "value": "[format('{0}-blob-{1}', parameters('storageAccountParams').blobNamePrefix, parameters('deploymentParams').global_uniqueness)]"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', format('{0}_{1}_{2}_la', parameters('logAnalyticsWorkspaceParams').workspaceName, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness))]",
+        "[resourceId('Microsoft.Resources/deployments', format('{0}_{1}_{2}_sa', parameters('storageAccountParams').storageAccountNamePrefix, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "[format('{0}_{1}_Dce', parameters('dceParams').endpointNamePrefix, parameters('deploymentParams').global_uniqueness)]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "deploymentParams": {
+            "value": "[parameters('deploymentParams')]"
+          },
+          "dceParams": {
+            "value": "[parameters('dceParams')]"
+          },
+          "osKind": {
+            "value": "linux"
+          },
+          "tags": {
+            "value": "[parameters('tags')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.18.4.5664",
+              "templateHash": "1346156020854514577"
+            }
+          },
+          "parameters": {
+            "module_metadata": {
+              "type": "object",
+              "defaultValue": {
+                "module_last_updated": "2023-05-19",
+                "owner": "miztiik@github"
+              }
+            },
+            "deploymentParams": {
+              "type": "object"
+            },
+            "dceParams": {
+              "type": "object"
+            },
+            "tags": {
+              "type": "object"
+            },
+            "osKind": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Insights/dataCollectionEndpoints",
+              "apiVersion": "2021-04-01",
+              "name": "[format('{0}-{1}-Dce-{2}', parameters('dceParams').endpointNamePrefix, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness)]",
+              "location": "[parameters('deploymentParams').location]",
+              "tags": "[parameters('tags')]",
+              "kind": "[parameters('osKind')]",
+              "properties": {
+                "networkAcls": {
+                  "publicNetworkAccess": "Enabled"
+                }
+              }
+            }
+          ],
+          "outputs": {
+            "module_metadata": {
+              "type": "object",
+              "value": "[parameters('module_metadata')]"
+            },
+            "linDataCollectionEndpointId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Insights/dataCollectionEndpoints', format('{0}-{1}-Dce-{2}', parameters('dceParams').endpointNamePrefix, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness))]"
+            },
+            "linDataCollectionEndpointName": {
+              "type": "string",
+              "value": "[format('{0}-{1}-Dce-{2}', parameters('dceParams').endpointNamePrefix, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness)]"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "[format('{0}_{1}_Dcr', parameters('logAnalyticsWorkspaceParams').workspaceName, parameters('deploymentParams').global_uniqueness)]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "deploymentParams": {
+            "value": "[parameters('deploymentParams')]"
+          },
+          "osKind": {
+            "value": "Linux"
+          },
+          "tags": {
+            "value": "[parameters('tags')]"
+          },
+          "storeEventsRuleName": {
+            "value": "storeEvents_Dcr"
+          },
+          "storeEventsLogFilePattern": {
+            "value": "/var/log/miztiik*.json"
+          },
+          "storeEventscustomTableNamePrefix": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}_{1}_{2}_la', parameters('logAnalyticsWorkspaceParams').workspaceName, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness)), '2022-09-01').outputs.storeEventsCustomTableNamePrefix.value]"
+          },
+          "automationEventsRuleName": {
+            "value": "miztiikAutomation_Dcr"
+          },
+          "automationEventsLogFilePattern": {
+            "value": "/var/log/miztiik-automation-*.log"
+          },
+          "automationEventsCustomTableNamePrefix": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}_{1}_{2}_la', parameters('logAnalyticsWorkspaceParams').workspaceName, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness)), '2022-09-01').outputs.automationEventsCustomTableNamePrefix.value]"
+          },
+          "managedRunCmdRuleName": {
+            "value": "miztiikManagedRunCmd_Dcr"
+          },
+          "managedRunCmdLogFilePattern": {
+            "value": "/var/log/azure/run-command-handler/*.log"
+          },
+          "managedRunCmdCustomTableNamePrefix": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}_{1}_{2}_la', parameters('logAnalyticsWorkspaceParams').workspaceName, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness)), '2022-09-01').outputs.managedRunCmdCustomTableNamePrefix.value]"
+          },
+          "linDataCollectionEndpointId": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}_{1}_Dce', parameters('dceParams').endpointNamePrefix, parameters('deploymentParams').global_uniqueness)), '2022-09-01').outputs.linDataCollectionEndpointId.value]"
+          },
+          "logAnalyticsPayGWorkspaceName": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}_{1}_{2}_la', parameters('logAnalyticsWorkspaceParams').workspaceName, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness)), '2022-09-01').outputs.logAnalyticsPayGWorkspaceName.value]"
+          },
+          "logAnalyticsPayGWorkspaceId": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}_{1}_{2}_la', parameters('logAnalyticsWorkspaceParams').workspaceName, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness)), '2022-09-01').outputs.logAnalyticsPayGWorkspaceId.value]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.18.4.5664",
+              "templateHash": "3989949129920889014"
+            }
+          },
+          "parameters": {
+            "module_metadata": {
+              "type": "object",
+              "defaultValue": {
+                "module_last_updated": "2023-05-19",
+                "owner": "miztiik@github"
+              }
+            },
+            "deploymentParams": {
+              "type": "object"
+            },
+            "tags": {
+              "type": "object"
+            },
+            "osKind": {
+              "type": "string"
+            },
+            "storeEventsRuleName": {
+              "type": "string"
+            },
+            "storeEventsLogFilePattern": {
+              "type": "string"
+            },
+            "storeEventscustomTableNamePrefix": {
+              "type": "string"
+            },
+            "automationEventsRuleName": {
+              "type": "string"
+            },
+            "automationEventsLogFilePattern": {
+              "type": "string"
+            },
+            "automationEventsCustomTableNamePrefix": {
+              "type": "string"
+            },
+            "managedRunCmdRuleName": {
+              "type": "string"
+            },
+            "managedRunCmdLogFilePattern": {
+              "type": "string"
+            },
+            "managedRunCmdCustomTableNamePrefix": {
+              "type": "string"
+            },
+            "linDataCollectionEndpointId": {
+              "type": "string"
+            },
+            "logAnalyticsPayGWorkspaceId": {
+              "type": "string"
+            },
+            "logAnalyticsPayGWorkspaceName": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Insights/dataCollectionRules",
+              "apiVersion": "2021-09-01-preview",
+              "name": "[format('{0}_{1}_{2}', parameters('storeEventsRuleName'), parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness)]",
+              "location": "[parameters('deploymentParams').location]",
+              "tags": "[parameters('tags')]",
+              "kind": "[parameters('osKind')]",
+              "properties": {
+                "description": "Log collection rule for miztiik web store data across all linux Vms.",
+                "dataCollectionEndpointId": "[parameters('linDataCollectionEndpointId')]",
+                "streamDeclarations": {
+                  "[format('Custom-{0}_CL', parameters('storeEventscustomTableNamePrefix'))]": {
+                    "columns": [
+                      {
+                        "name": "TimeGenerated",
+                        "type": "datetime"
+                      },
+                      {
+                        "name": "RawData",
+                        "type": "string"
+                      },
+                      {
+                        "name": "request_id",
+                        "type": "string"
+                      },
+                      {
+                        "name": "event_type",
+                        "type": "string"
+                      },
+                      {
+                        "name": "store_id",
+                        "type": "int"
+                      },
+                      {
+                        "name": "cust_id",
+                        "type": "int"
+                      },
+                      {
+                        "name": "category",
+                        "type": "string"
+                      },
+                      {
+                        "name": "sku",
+                        "type": "int"
+                      },
+                      {
+                        "name": "price",
+                        "type": "real"
+                      },
+                      {
+                        "name": "qty",
+                        "type": "int"
+                      },
+                      {
+                        "name": "discount",
+                        "type": "real"
+                      },
+                      {
+                        "name": "gift_wrap",
+                        "type": "boolean"
+                      },
+                      {
+                        "name": "variant",
+                        "type": "string"
+                      },
+                      {
+                        "name": "priority_shipping",
+                        "type": "boolean"
+                      },
+                      {
+                        "name": "contact_me",
+                        "type": "string"
+                      }
+                    ]
+                  }
+                },
+                "dataSources": {
+                  "logFiles": [
+                    {
+                      "streams": [
+                        "[format('Custom-{0}_CL', parameters('storeEventscustomTableNamePrefix'))]"
+                      ],
+                      "filePatterns": [
+                        "[parameters('storeEventsLogFilePattern')]"
+                      ],
+                      "format": "text",
+                      "settings": {
+                        "text": {
+                          "recordStartTimestampFormat": "ISO 8601"
+                        }
+                      },
+                      "name": "myFancyLogFileFormat"
+                    }
+                  ]
+                },
+                "destinations": {
+                  "logAnalytics": [
+                    {
+                      "name": "[parameters('logAnalyticsPayGWorkspaceName')]",
+                      "workspaceResourceId": "[parameters('logAnalyticsPayGWorkspaceId')]"
+                    }
+                  ]
+                },
+                "dataFlows": [
+                  {
+                    "streams": [
+                      "[format('Custom-{0}_CL', parameters('storeEventscustomTableNamePrefix'))]"
+                    ],
+                    "destinations": [
+                      "[parameters('logAnalyticsPayGWorkspaceName')]"
+                    ],
+                    "transformKql": "source | extend jsonContext = parse_json(tostring(RawData)) | extend TimeGenerated=now(), RawData=tostring(RawData), request_id=tostring(jsonContext.request_id) , event_type=tostring(jsonContext.event_type), store_id=toint(jsonContext.store_id),cust_id=toint(jsonContext.cust_id),category=tostring(jsonContext.category),sku=toint(jsonContext.sku),price=toreal(jsonContext.price),qty=toint(jsonContext.qty),discount=toreal(jsonContext.discount),gift_wrap=tobool(jsonContext.gift_wrap),variant=tostring(jsonContext.variant),priority_shipping=tobool(jsonContext.priority_shipping),contact_me=tostring(jsonContext.contact_me)",
+                    "outputStream": "[format('Custom-{0}_CL', parameters('storeEventscustomTableNamePrefix'))]"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "Microsoft.Insights/dataCollectionRules",
+              "apiVersion": "2021-09-01-preview",
+              "name": "[format('{0}_{1}_{2}', parameters('automationEventsRuleName'), parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness)]",
+              "location": "[parameters('deploymentParams').location]",
+              "tags": "[parameters('tags')]",
+              "kind": "[parameters('osKind')]",
+              "properties": {
+                "description": "Log collection rule for miztiik automation events across all linux Vms.",
+                "dataCollectionEndpointId": "[parameters('linDataCollectionEndpointId')]",
+                "streamDeclarations": {
+                  "[format('Custom-{0}_CL', parameters('automationEventsCustomTableNamePrefix'))]": {
+                    "columns": [
+                      {
+                        "name": "TimeGenerated",
+                        "type": "datetime"
+                      },
+                      {
+                        "name": "RawData",
+                        "type": "string"
+                      },
+                      {
+                        "name": "request_id",
+                        "type": "string"
+                      }
+                    ]
+                  }
+                },
+                "dataSources": {
+                  "logFiles": [
+                    {
+                      "streams": [
+                        "[format('Custom-{0}_CL', parameters('automationEventsCustomTableNamePrefix'))]"
+                      ],
+                      "filePatterns": [
+                        "[parameters('automationEventsLogFilePattern')]"
+                      ],
+                      "format": "text",
+                      "settings": {
+                        "text": {
+                          "recordStartTimestampFormat": "ISO 8601"
+                        }
+                      },
+                      "name": "myFancyLogFileFormat"
+                    }
+                  ]
+                },
+                "destinations": {
+                  "logAnalytics": [
+                    {
+                      "name": "[parameters('logAnalyticsPayGWorkspaceName')]",
+                      "workspaceResourceId": "[parameters('logAnalyticsPayGWorkspaceId')]"
+                    }
+                  ]
+                },
+                "dataFlows": [
+                  {
+                    "streams": [
+                      "[format('Custom-{0}_CL', parameters('automationEventsCustomTableNamePrefix'))]"
+                    ],
+                    "destinations": [
+                      "[parameters('logAnalyticsPayGWorkspaceName')]"
+                    ],
+                    "transformKql": "source | extend TimeGenerated=now(), RawData=tostring(RawData)",
+                    "outputStream": "[format('Custom-{0}_CL', parameters('automationEventsCustomTableNamePrefix'))]"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "Microsoft.Insights/dataCollectionRules",
+              "apiVersion": "2021-09-01-preview",
+              "name": "[format('{0}_{1}_{2}', parameters('managedRunCmdRuleName'), parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness)]",
+              "location": "[parameters('deploymentParams').location]",
+              "tags": "[parameters('tags')]",
+              "kind": "[parameters('osKind')]",
+              "properties": {
+                "description": "Log collection rule Managed Run Command executions across all linux Vms. https://learn.microsoft.com/en-us/azure/virtual-machines/linux/run-command#action-run-command-linux-troubleshooting",
+                "dataCollectionEndpointId": "[parameters('linDataCollectionEndpointId')]",
+                "streamDeclarations": {
+                  "[format('Custom-{0}_CL', parameters('managedRunCmdCustomTableNamePrefix'))]": {
+                    "columns": [
+                      {
+                        "name": "TimeGenerated",
+                        "type": "datetime"
+                      },
+                      {
+                        "name": "RawData",
+                        "type": "string"
+                      }
+                    ]
+                  }
+                },
+                "dataSources": {
+                  "logFiles": [
+                    {
+                      "streams": [
+                        "[format('Custom-{0}_CL', parameters('managedRunCmdCustomTableNamePrefix'))]"
+                      ],
+                      "filePatterns": [
+                        "[parameters('managedRunCmdLogFilePattern')]"
+                      ],
+                      "format": "text",
+                      "settings": {
+                        "text": {
+                          "recordStartTimestampFormat": "ISO 8601"
+                        }
+                      },
+                      "name": "myFancyLogFileFormat"
+                    }
+                  ]
+                },
+                "destinations": {
+                  "logAnalytics": [
+                    {
+                      "name": "[parameters('logAnalyticsPayGWorkspaceName')]",
+                      "workspaceResourceId": "[parameters('logAnalyticsPayGWorkspaceId')]"
+                    }
+                  ]
+                },
+                "dataFlows": [
+                  {
+                    "streams": [
+                      "[format('Custom-{0}_CL', parameters('managedRunCmdCustomTableNamePrefix'))]"
+                    ],
+                    "destinations": [
+                      "[parameters('logAnalyticsPayGWorkspaceName')]"
+                    ],
+                    "transformKql": "source | extend TimeGenerated=now(), RawData=tostring(RawData)",
+                    "outputStream": "[format('Custom-{0}_CL', parameters('managedRunCmdCustomTableNamePrefix'))]"
+                  }
+                ]
+              }
+            }
+          ],
+          "outputs": {
+            "module_metadata": {
+              "type": "object",
+              "value": "[parameters('module_metadata')]"
+            },
+            "storeEventsDcrId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Insights/dataCollectionRules', format('{0}_{1}_{2}', parameters('storeEventsRuleName'), parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness))]"
+            },
+            "automationEventsDcrId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Insights/dataCollectionRules', format('{0}_{1}_{2}', parameters('automationEventsRuleName'), parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness))]"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', format('{0}_{1}_Dce', parameters('dceParams').endpointNamePrefix, parameters('deploymentParams').global_uniqueness))]",
+        "[resourceId('Microsoft.Resources/deployments', format('{0}_{1}_{2}_la', parameters('logAnalyticsWorkspaceParams').workspaceName, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "[format('{0}_{1}_Vnet', parameters('vnetParams').vnetNamePrefix, parameters('deploymentParams').global_uniqueness)]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "deploymentParams": {
+            "value": "[parameters('deploymentParams')]"
+          },
+          "vnetParams": {
+            "value": "[parameters('vnetParams')]"
+          },
+          "tags": {
+            "value": "[parameters('tags')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.18.4.5664",
+              "templateHash": "5172761532526636941"
+            }
+          },
+          "parameters": {
+            "module_metadata": {
+              "type": "object",
+              "defaultValue": {
+                "module_last_updated": "2023-06-04",
+                "owner": "miztiik@github"
+              }
+            },
+            "deploymentParams": {
+              "type": "object"
+            },
+            "vnetParams": {
+              "type": "object"
+            },
+            "tags": {
+              "type": "object",
+              "defaultValue": "[resourceGroup().tags]"
+            },
+            "vnetAddPrefixes": {
+              "type": "object",
+              "defaultValue": {
+                "addressPrefixes": [
+                  "10.0.0.0/16"
+                ]
+              }
+            },
+            "webSubnet01Cidr": {
+              "type": "string",
+              "defaultValue": "10.0.0.0/24"
+            },
+            "webSubnet02Cidr": {
+              "type": "string",
+              "defaultValue": "10.0.1.0/24"
+            },
+            "appSubnet01Cidr": {
+              "type": "string",
+              "defaultValue": "10.0.2.0/24"
+            },
+            "appSubnet02Cidr": {
+              "type": "string",
+              "defaultValue": "10.0.3.0/24"
+            },
+            "dbSubnet01Cidr": {
+              "type": "string",
+              "defaultValue": "10.0.4.0/24"
+            },
+            "dbSubnet02Cidr": {
+              "type": "string",
+              "defaultValue": "10.0.5.0/24"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Network/virtualNetworks",
+              "apiVersion": "2021-05-01",
+              "name": "[format('{0}_{1}_vnet_{2}', parameters('vnetParams').vnetNamePrefix, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness)]",
+              "location": "[parameters('deploymentParams').location]",
+              "tags": "[parameters('tags')]",
+              "properties": {
+                "addressSpace": "[parameters('vnetAddPrefixes')]",
+                "subnets": [
+                  {
+                    "name": "webSubnet01",
+                    "properties": {
+                      "addressPrefix": "[parameters('webSubnet01Cidr')]"
+                    }
+                  },
+                  {
+                    "name": "webSubnet02",
+                    "properties": {
+                      "addressPrefix": "[parameters('webSubnet02Cidr')]"
+                    }
+                  },
+                  {
+                    "name": "appSubnet01",
+                    "properties": {
+                      "addressPrefix": "[parameters('appSubnet01Cidr')]"
+                    }
+                  },
+                  {
+                    "name": "appSubnet02",
+                    "properties": {
+                      "addressPrefix": "[parameters('appSubnet02Cidr')]"
+                    }
+                  },
+                  {
+                    "name": "dbSubnet01",
+                    "properties": {
+                      "addressPrefix": "[parameters('dbSubnet01Cidr')]"
+                    }
+                  },
+                  {
+                    "name": "dbSubnet02",
+                    "properties": {
+                      "addressPrefix": "[parameters('dbSubnet02Cidr')]"
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "outputs": {
+            "module_metadata": {
+              "type": "object",
+              "value": "[parameters('module_metadata')]"
+            },
+            "vnetId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Network/virtualNetworks', format('{0}_{1}_vnet_{2}', parameters('vnetParams').vnetNamePrefix, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness))]"
+            },
+            "vnetName": {
+              "type": "string",
+              "value": "[format('{0}_{1}_vnet_{2}', parameters('vnetParams').vnetNamePrefix, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness)]"
+            },
+            "vnetSubnets": {
+              "type": "array",
+              "value": "[reference(resourceId('Microsoft.Network/virtualNetworks', format('{0}_{1}_vnet_{2}', parameters('vnetParams').vnetNamePrefix, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness)), '2021-05-01').subnets]"
+            },
+            "dbSubnet01Id": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Network/virtualNetworks', format('{0}_{1}_vnet_{2}', parameters('vnetParams').vnetNamePrefix, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness)), '2021-05-01').subnets[4].id]"
+            },
+            "dbSubnet02Id": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Network/virtualNetworks', format('{0}_{1}_vnet_{2}', parameters('vnetParams').vnetNamePrefix, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness)), '2021-05-01').subnets[5].id]"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "[format('{0}_{1}_Vm', parameters('vmParams').vmNamePrefix, parameters('deploymentParams').global_uniqueness)]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "deploymentParams": {
+            "value": "[parameters('deploymentParams')]"
+          },
+          "uami_name_vm": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}_{1}_{2}_uami', parameters('deploymentParams').enterprise_name_suffix, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness)), '2022-09-01').outputs.uami_name_vm.value]"
+          },
+          "saName": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}_{1}_{2}_sa', parameters('storageAccountParams').storageAccountNamePrefix, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness)), '2022-09-01').outputs.saName.value]"
+          },
+          "blobContainerName": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}_{1}_{2}_blob', parameters('storageAccountParams').storageAccountNamePrefix, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness)), '2022-09-01').outputs.blobContainerName.value]"
+          },
+          "saPrimaryEndpointsBlob": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}_{1}_{2}_sa', parameters('storageAccountParams').storageAccountNamePrefix, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness)), '2022-09-01').outputs.saPrimaryEndpointsBlob.value]"
+          },
+          "vmParams": {
+            "value": "[parameters('vmParams')]"
+          },
+          "vnetName": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}_{1}_Vnet', parameters('vnetParams').vnetNamePrefix, parameters('deploymentParams').global_uniqueness)), '2022-09-01').outputs.vnetName.value]"
+          },
+          "logAnalyticsPayGWorkspaceId": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}_{1}_{2}_la', parameters('logAnalyticsWorkspaceParams').workspaceName, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness)), '2022-09-01').outputs.logAnalyticsPayGWorkspaceId.value]"
+          },
+          "linDataCollectionEndpointId": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}_{1}_Dce', parameters('dceParams').endpointNamePrefix, parameters('deploymentParams').global_uniqueness)), '2022-09-01').outputs.linDataCollectionEndpointId.value]"
+          },
+          "storeEventsDcrId": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}_{1}_Dcr', parameters('logAnalyticsWorkspaceParams').workspaceName, parameters('deploymentParams').global_uniqueness)), '2022-09-01').outputs.storeEventsDcrId.value]"
+          },
+          "automationEventsDcrId": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}_{1}_Dcr', parameters('logAnalyticsWorkspaceParams').workspaceName, parameters('deploymentParams').global_uniqueness)), '2022-09-01').outputs.automationEventsDcrId.value]"
+          },
+          "add_to_appln_gw": {
+            "value": true
+          },
+          "appln_gw_name": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}_{1}_ApplnGw', parameters('applnGwParams').applnGwNamePrefix, parameters('deploymentParams').global_uniqueness)), '2022-09-01').outputs.appln_gw_name.value]"
+          },
+          "appln_gw_back_end_pool_name": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}_{1}_ApplnGw', parameters('applnGwParams').applnGwNamePrefix, parameters('deploymentParams').global_uniqueness)), '2022-09-01').outputs.appln_gw_back_end_pool_name.value]"
+          },
+          "tags": {
+            "value": "[parameters('tags')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.18.4.5664",
+              "templateHash": "3459845097355393955"
+            }
+          },
+          "parameters": {
+            "module_metadata": {
+              "type": "object",
+              "defaultValue": {
+                "module_last_updated": "2023-06-04",
+                "owner": "miztiik@github"
+              }
+            },
+            "deploymentParams": {
+              "type": "object"
+            },
+            "tags": {
+              "type": "object"
+            },
+            "uami_name_vm": {
+              "type": "string"
+            },
+            "saName": {
+              "type": "string"
+            },
+            "blobContainerName": {
+              "type": "string"
+            },
+            "saPrimaryEndpointsBlob": {
+              "type": "string"
+            },
+            "logAnalyticsPayGWorkspaceId": {
+              "type": "string"
+            },
+            "linDataCollectionEndpointId": {
+              "type": "string"
+            },
+            "storeEventsDcrId": {
+              "type": "string"
+            },
+            "automationEventsDcrId": {
+              "type": "string"
+            },
+            "vmParams": {
+              "type": "object"
+            },
+            "vnetName": {
+              "type": "string"
+            },
+            "vmName": {
+              "type": "string",
+              "defaultValue": "[replace(format('{0}-{1}-{2}-{3}', parameters('vmParams').vmNamePrefix, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').enterprise_name_suffix, parameters('deploymentParams').global_uniqueness), '_', '-')]"
+            },
+            "dnsLabelPrefix": {
+              "type": "string",
+              "defaultValue": "[toLower(format('{0}-{1}-{2}', parameters('vmParams').vmNamePrefix, parameters('deploymentParams').global_uniqueness, uniqueString(resourceGroup().id, parameters('vmName'))))]"
+            },
+            "add_to_appln_gw": {
+              "type": "bool",
+              "defaultValue": false
+            },
+            "appln_gw_name": {
+              "type": "string"
+            },
+            "appln_gw_back_end_pool_name": {
+              "type": "string"
+            },
+            "blobOwnerRoleId": {
+              "type": "string",
+              "defaultValue": "b7e6dc6d-f1e8-4753-8033-0f276bb0955b"
+            },
+            "metricsPublisherRoleId": {
+              "type": "string",
+              "defaultValue": "3913510d-42f4-4e42-8a64-420c390055eb"
+            }
+          },
+          "variables": {
+            "no_of_vms": "[parameters('vmParams').vmCount]",
+            "userDataScript": "IyEvYmluL2Jhc2gKIyBzZXQgLWV4CnNldCAteApzZXQgLW8gcGlwZWZhaWwKCiMgdmVyc2lvbjogMjZNYXkyMDIzCgojIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIwojIyMjIyMjIyMjIyMjICAgICBTRVQgR0xPQkFMUyAgICAgIyMjIyMjIyMjIyMjIyMjIwojIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIwoKUkVQT19OQU1FPSJhenVyZS13ZWItc2VydmVyLXZtIgoKR0lUX1JFUE9fVVJMPSJodHRwczovL2dpdGh1Yi5jb20vbWl6dGlpay8kUkVQT19OQU1FLmdpdCIKCkFQUF9ESVI9Ii92YXIvJFJFUE9fTkFNRSIKCkxPR19GSUxFPSIvdmFyL2xvZy9taXp0aWlrLWF1dG9tYXRpb24tYm9vdHN0cmFwLSQoZGF0ZSArJyVZLSVtLSVkJykubG9nIgoKIyBodHRwczovL2xlYXJuLm1pY3Jvc29mdC5jb20vZW4tdXMvYXp1cmUvdmlydHVhbC1tYWNoaW5lcy9saW51eC90dXRvcmlhbC1hdXRvbWF0ZS12bS1kZXBsb3ltZW50CgppbnN0cnVjdGlvbigpCnsKICBlY2hvICJ1c2FnZTogLi9idWlsZC5zaCBwYWNrYWdlIDxzdGFnZT4gPHJlZ2lvbj4iCiAgZWNobyAiIgogIGVjaG8gIi9idWlsZC5zaCBkZXBsb3kgPHN0YWdlPiA8cmVnaW9uPiA8cGtnX2Rpcj4iCiAgZWNobyAiIgogIGVjaG8gIi9idWlsZC5zaCB0ZXN0LTx0ZXN0X3R5cGU+IDxzdGFnZT4iCn0KCmxvZ190aGlzKCkgewogICMgQ2FsbGluZyB0aGlzIGZ1bmN0aW9uIGxpa2UgbG9nX3RoaXMgIkJlZ2luIGluc3RhbGxhdGlvbiIgd2lsbCByZXN1bHQgbG9nIGxpa2UgYmVsb3cKICAjIHsidGltZXN0YW1wIjogIjIwMjMtMDQtMTVUMTA6MjI6MjNaIiwgIm1lc3NhZ2UiOiAiQmVnaW4gaW5zdGFsbGF0aW9uIn0KICAgIGxvY2FsIHRpbWVzdGFtcD0kKGRhdGUgLXUgKyIlWS0lbS0lZFQlSDolTTolU1oiKQogICAgbG9jYWwgbWVzc2FnZT0kKHByaW50ZiAnJXMnICIkKiIgfCBzZWQgJ3MvIi9cXCIvZycpICMgRXNjYXBpbmcgZG91YmxlIHF1b3RlcwogICAgcHJpbnRmICd7InRpbWVzdGFtcCI6ICIlcyIsICJtZXNzYWdlIjogIiVzIn1cbicgIiR0aW1lc3RhbXAiICIkbWVzc2FnZSIKfQoKYXNzdW1lX3JvbGUoKSB7CiAgaWYgWyAtbiAiJERFUExPWUVSX1JPTEVfQVJOIiBdOyB0aGVuCiAgICBlY2hvICJBc3N1bWluZyByb2xlICRERVBMT1lFUl9ST0xFX0FSTiAuLi4iCiAgZmkKfQoKdW5hc3N1bWVfcm9sZSgpIHsKICB1bnNldCBUT0tFTgp9CgpmdW5jdGlvbiBjbG9uZV9naXRfcmVwbygpewogIGxvZ190aGlzICJDbG9uaW5nIFJlcG8iCiAgICAjIG1rZGlyIC1wIC92YXIvCiAgICBjZCAvdmFyCiAgICBnaXQgY2xvbmUgJEdJVF9SRVBPX1VSTAogICAgY2QgL3Zhci8kUkVQT19OQU1FCn0KCmZ1bmN0aW9uIGFkZF9lbnZfdmFycygpewogICAgSU1EUz1gY3VybCAtcyAtSCBNZXRhZGF0YTp0cnVlIC0tbm9wcm94eSAiKiIgImh0dHA6Ly8xNjkuMjU0LjE2OS4yNTQvbWV0YWRhdGEvaW5zdGFuY2U/YXBpLXZlcnNpb249MjAyMS0wMi0wMSJgCiAgICBkZWNsYXJlIC1nIFVTRVJfREFUQV9TQ1JJUFQ9YGN1cmwgLUggTWV0YWRhdGE6dHJ1ZSAtLW5vcHJveHkgIioiICJodHRwOi8vMTY5LjI1NC4xNjkuMjU0L21ldGFkYXRhL2luc3RhbmNlL2NvbXB1dGUvdXNlckRhdGE/YXBpLXZlcnNpb249MjAyMS0wMS0wMSZmb3JtYXQ9dGV4dCIgfCBiYXNlNjQgLS1kZWNvZGVgCn0KCmZ1bmN0aW9uIGluc3RhbGxfbGlic19vbl91YnVudHUoKXsKICBsb2dfdGhpcyAiQmVnaW4gQXp1cmUgQ0xJIEluc3RhbGxhdGlvbiIKICAjIGh0dHBzOi8vbGVhcm4ubWljcm9zb2Z0LmNvbS9lbi11cy9jbGkvYXp1cmUvaW5zdGFsbC1henVyZS1jbGktbGludXg/cGl2b3RzPWFwdAogIGN1cmwgLXNMIGh0dHBzOi8vYWthLm1zL0luc3RhbGxBenVyZUNMSURlYiB8IHN1ZG8gYmFzaAoKICAjIEluaXRpYXRlIGF6IGxvZ2luCiAKICBheiBjb25maWcgc2V0IGV4dGVuc2lvbi51c2VfZHluYW1pY19pbnN0YWxsPXllc193aXRob3V0X3Byb21wdAogIGF6IGxvZ2luIC0taWRlbnRpdHkKCiAgbG9nX3RoaXMgIkJlZ2luIGpxLCBnaXQsIHB5dGhvbjMtcGlwIEluc3RhbGxhdGlvbiIKCiAgc3VkbyBhcHQtZ2V0IC15IGluc3RhbGwganEKICBzdWRvIGFwdC1nZXQgLXkgaW5zdGFsbCBnaXQKICBzdWRvIGFwdC1nZXQgLXkgaW5zdGFsbCBweXRob24zLXBpcAogIHN1ZG8gYXB0LWdldCAteSBpbnN0YWxsIG15c3FsLWNsaWVudAoKICAjIHN1ZG8gYXB0LWdldCAteSBweXRob24zIC1tIHBpcCBpbnN0YWxsIC0tdXBncmFkZSBwaXAKICAKICBsb2dfdGhpcyAiRW5kIG9mIGpxLCBnaXQsIHB5dGhvbjMtcGlwIEluc3RhbGxhdGlvbiIKfQoKZnVuY3Rpb24gaW5zdGFsbF9henVyZV9weXRob25fc2RrKCl7CiAgbG9nX3RoaXMgIkJlZ2luIEF6dXJlIFB5dGhvbiBTREsgSW5zdGFsbGF0aW9uIgogIAogIHB5dGhvbjMgLW0gcGlwIGluc3RhbGwgLS1uby1jYWNoZS1kaXIgLS11cGdyYWRlIGluc3RhbGwgYXp1cmUtaWRlbnRpdHkKICBweXRob24zIC1tIHBpcCBpbnN0YWxsIC0tbm8tY2FjaGUtZGlyIC0tdXBncmFkZSBpbnN0YWxsIGF6dXJlLXN0b3JhZ2UtYmxvYgogIHB5dGhvbjMgLW0gcGlwIGluc3RhbGwgLS1uby1jYWNoZS1kaXIgLS11cGdyYWRlIGluc3RhbGwgYXp1cmUtc3RvcmFnZS1xdWV1ZQogIHB5dGhvbjMgLW0gcGlwIGluc3RhbGwgLS1uby1jYWNoZS1kaXIgLS11cGdyYWRlIGluc3RhbGwgYXp1cmUtYXBwY29uZmlndXJhdGlvbi1wcm92aWRlcgogIHB5dGhvbjMgLW0gcGlwIGluc3RhbGwgLS1uby1jYWNoZS1kaXIgLS11cGdyYWRlIGluc3RhbGwgYXp1cmUtY29zbW9zCiAgcHl0aG9uMyAtbSBwaXAgaW5zdGFsbCAtLW5vLWNhY2hlLWRpciAtLXVwZ3JhZGUgaW5zdGFsbCBteXNxbC5jb25uZWN0b3IKICAKICBsb2dfdGhpcyAiRW5kIG9mIEF6dXJlIFB5dGhvbiBTREsgSW5zdGFsbGF0aW9uIgp9CgpmdW5jdGlvbiBpbnN0YWxsX2xpYnMoKXsKICAgICMgUHJlcGFyZSB0aGUgc2VydmVyIGZvciBweXRob24zCiAgICBzdWRvIHl1bSAteSBpbnN0YWxsIGdpdCBqcQogICAgc3VkbyB5dW0gLXkgaW5zdGFsbCBweXRob24zLXBpcAogICAgc3VkbyB5dW0gLXkgaW5zdGFsbCBweXRob24zIAp9CgpmdW5jdGlvbiBpbnN0YWxsX25naW54KCl7CiAgICBzdWRvIGFwdC1nZXQgLXkgdXBkYXRlCiAgICBzdWRvIGFwdC1nZXQgLXkgaW5zdGFsbCBuZ2lueAogICAgc3VkbyBzeXN0ZW1jdGwgc3RhcnQgbmdpbngKICAgIHN1ZG8gc3lzdGVtY3RsIGVuYWJsZSBuZ2lueAoKCiAgICAjIEdldCB0aGUgc2VydmVyIElQIGFkZHJlc3MgYW5kIGhvc3RuYW1lCiAgICBJUF9BRERSRVNTPSQoaG9zdG5hbWUgLUkgfCBhd2sgJ3twcmludCAkMX0nKQogICAgSE9TVE5BTUU9JChob3N0bmFtZSkKCiMgQ3JlYXRlIGhvbGxhLmh0bWwgZmlsZQplY2hvICJob2xsYSIgPiAvdmFyL3d3dy9odG1sL2hvbGxhLmh0bWwKCiMgQ3JlYXRlIE5naW54IGNvbmZpZ3VyYXRpb24gZmlsZQpjYXQgPDwgRU9GID4gL2V0Yy9uZ2lueC9zaXRlcy1hdmFpbGFibGUvbWl6dGlpa2NvbmZpZwpzZXJ2ZXIgewogICAgbGlzdGVuIDgwOwogICAgbGlzdGVuIFs6Ol06ODA7CgogICAgc2VydmVyX25hbWUgeW91cl9kb21haW4uY29tOwoKICAgIHJvb3QgL3Zhci93d3cvaHRtbDsKICAgIGluZGV4IGhvbGxhLmh0bWw7CgogICAgbG9jYXRpb24gLyB7CiAgICAgICAgdHJ5X2ZpbGVzIFwkdXJpIFwkdXJpLyA9NDA0OwogICAgfQp9CkVPRgoKICAgICMgQ3JlYXRlIHN5bWJvbGljIGxpbmsgdG8gZW5hYmxlIHRoZSBjb25maWd1cmF0aW9uCiAgICBzdWRvIGxuIC1zIC9ldGMvbmdpbngvc2l0ZXMtYXZhaWxhYmxlL21penRpaWtjb25maWcgL2V0Yy9uZ2lueC9zaXRlcy1lbmFibGVkLwoKICAgICMgQ3JlYXRlIHRoZSBpbmRleC5odG1sIGZpbGUgd2l0aCB0aGUgZGVzaXJlZCBjb250ZW50CiAgICBzdWRvIHNoIC1jICJlY2hvICdIZWxsbyBXb3JsZCBmcm9tIG1penRpaWstYXV0b21hdGlvbi12bSA8Yj4kSE9TVE5BTUU8L2I+IDxiPiRJUF9BRERSRVNTPC9iPiBvbiAkKGRhdGUpICcgPiAvdmFyL3d3dy9odG1sL2luZGV4Lmh0bWwiCgogICAgIyBTdGFydCB0aGUgbmdpbnggc2VydmljZQogICAgc3VkbyBzZXJ2aWNlIG5naW54IHJlc3RhcnQKICAgIHN1ZG8gc3lzdGVtY3RsIHJlc3RhcnQgbmdpbngKfQoKZnVuY3Rpb24gaW5zdGFsbF9ub2RlanMoKXsKICAgIGN1cmwgLW8tIGh0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9udm0tc2gvbnZtL3YwLjM0LjAvaW5zdGFsbC5zaCB8IGJhc2gKICAgIC4gfi8ubnZtL252bS5zaAogICAgbnZtIGluc3RhbGwgbm9kZQogICAgbm9kZSAtZSAiY29uc29sZS5sb2coJ1J1bm5pbmcgTm9kZS5qcyAnICsgcHJvY2Vzcy52ZXJzaW9uKSIKfQoKZnVuY3Rpb24gY2hlY2tfZXhlY3V0aW9uKCl7CiAgSE9TVF9GUUROPSQoaG9zdG5hbWUpCiAgSE9TVF9JUD0kKGhvc3RuYW1lIC1JKQogIENVUlJfUFdEPSQocHdkKQogIENVUlJfVVNFUj0kKHdob2FtaSkKICBDVVJSX1BBVEg9JChlY2hvICRQQVRIKQogIGxvZ190aGlzICJNaXp0aWlrIEN1c3RvbWlzYXRpb24gb2YgSG9zdDogJHtIT1NUX0ZRRE59IC0gJHtIT1NUX0lQfSIKICAjIGxvZ190aGlzICJoZWxsbyIgPj4vdmFyL2xvZy9taXp0aWlrLmxvZwogIGxvZ190aGlzICJDdXJyZW50IFVzZXI6ICR7Q1VSUl9VU0VSfSIKICBsb2dfdGhpcyAiQ3VycmVudCBQV0Q6ICR7Q1VSUl9QV0R9IgogIGxvZ190aGlzICJDdXJyZW50IFBBVEg6ICR7Q1VSUl9QQVRIfSIKfQoKY2hlY2tfZXhlY3V0aW9uICAgICAgICAgICAgICAgICB8ICAgdGVlIC1hICIke0xPR19GSUxFfSIKaW5zdGFsbF9saWJzX29uX3VidW50dSAgICAgICAgICB8ICAgdGVlIC1hICIke0xPR19GSUxFfSIKIyBpbnN0YWxsX2F6dXJlX3B5dGhvbl9zZGsgICAgICAgIHwgICB0ZWUgLWEgIiR7TE9HX0ZJTEV9IgojIGNsb25lX2dpdF9yZXBvICAgICAgICAgICAgICAgICAgfCAgIHRlZSAtYSAiJHtMT0dfRklMRX0iCmluc3RhbGxfbmdpbnggICAgICAgICAgICAgICAgICB8ICAgdGVlIC1hICIke0xPR19GSUxFfSIKCgo=",
+            "LinuxConfiguration": {
+              "disablePasswordAuthentication": true,
+              "ssh": {
+                "publickeys": [
+                  {
+                    "path": "[format('/home/{0}/.ssh/authorized_keys', parameters('vmParams').adminUsername)]",
+                    "keyData": "[parameters('vmParams').adminPassword]"
+                  }
+                ]
+              }
+            },
+            "blobPermsConditionStr": "[format('((!(ActionMatches{{''Microsoft.Storage/storageAccounts/blobServices/containers/blobs/read''}}) AND !(ActionMatches{{''Microsoft.Storage/storageAccounts/blobServices/containers/blobs/write''}}) ) OR (@Resource[Microsoft.Storage/storageAccounts/blobServices/containers:name] StringEquals ''{0}''))', parameters('blobContainerName'))]"
+          },
+          "resources": [
+            {
+              "copy": {
+                "name": "r_publicIp",
+                "count": "[length(range(0, variables('no_of_vms')))]"
+              },
+              "type": "Microsoft.Network/publicIPAddresses",
+              "apiVersion": "2022-05-01",
+              "name": "[format('{0}-pip-{1}', parameters('vmName'), range(0, variables('no_of_vms'))[copyIndex()])]",
+              "location": "[parameters('deploymentParams').location]",
+              "tags": "[parameters('tags')]",
+              "sku": {
+                "name": "[parameters('vmParams').publicIpSku]"
+              },
+              "properties": {
+                "publicIPAllocationMethod": "[parameters('vmParams').publicIPAllocationMethod]",
+                "publicIPAddressVersion": "IPv4",
+                "deleteOption": "Delete",
+                "dnsSettings": {
+                  "domainNameLabel": "[format('{0}-{1}', parameters('dnsLabelPrefix'), range(0, variables('no_of_vms'))[copyIndex()])]"
+                }
+              }
+            },
+            {
+              "type": "Microsoft.Network/networkSecurityGroups",
+              "apiVersion": "2021-05-01",
+              "name": "webSg",
+              "location": "[parameters('deploymentParams').location]",
+              "tags": "[parameters('tags')]",
+              "properties": {
+                "securityRules": [
+                  {
+                    "name": "AllowInboundSsh",
+                    "properties": {
+                      "priority": 250,
+                      "protocol": "Tcp",
+                      "access": "Allow",
+                      "direction": "Inbound",
+                      "sourceAddressPrefix": "*",
+                      "sourcePortRange": "*",
+                      "destinationAddressPrefix": "*",
+                      "destinationPortRange": "22"
+                    }
+                  },
+                  {
+                    "name": "HTTP",
+                    "properties": {
+                      "priority": 200,
+                      "protocol": "Tcp",
+                      "access": "Allow",
+                      "direction": "Inbound",
+                      "sourceAddressPrefix": "*",
+                      "sourcePortRange": "*",
+                      "destinationAddressPrefix": "*",
+                      "destinationPortRange": "80"
+                    }
+                  },
+                  {
+                    "name": "AllowHTTPInbound",
+                    "properties": {
+                      "priority": 100,
+                      "access": "Allow",
+                      "direction": "Inbound",
+                      "protocol": "*",
+                      "sourceAddressPrefix": "Internet",
+                      "sourcePortRange": "*",
+                      "destinationAddressPrefix": "*",
+                      "destinationPortRange": "80"
+                    }
+                  },
+                  {
+                    "name": "Outbound_Allow_All",
+                    "properties": {
+                      "priority": 300,
+                      "protocol": "*",
+                      "access": "Allow",
+                      "direction": "Outbound",
+                      "sourceAddressPrefix": "*",
+                      "sourcePortRange": "*",
+                      "destinationAddressPrefix": "*",
+                      "destinationPortRange": "*"
+                    }
+                  },
+                  {
+                    "name": "AzureResourceManager",
+                    "properties": {
+                      "protocol": "Tcp",
+                      "sourcePortRange": "*",
+                      "destinationPortRange": "443",
+                      "sourceAddressPrefix": "*",
+                      "destinationAddressPrefix": "AzureResourceManager",
+                      "access": "Allow",
+                      "priority": 160,
+                      "direction": "Outbound"
+                    }
+                  },
+                  {
+                    "name": "AzureStorageAccount",
+                    "properties": {
+                      "protocol": "Tcp",
+                      "sourcePortRange": "*",
+                      "destinationPortRange": "443",
+                      "sourceAddressPrefix": "*",
+                      "destinationAddressPrefix": "[format('Storage.{0}', parameters('deploymentParams').location)]",
+                      "access": "Allow",
+                      "priority": 170,
+                      "direction": "Outbound"
+                    }
+                  },
+                  {
+                    "name": "AzureFrontDoor",
+                    "properties": {
+                      "protocol": "Tcp",
+                      "sourcePortRange": "*",
+                      "destinationPortRange": "443",
+                      "sourceAddressPrefix": "*",
+                      "destinationAddressPrefix": "AzureFrontDoor.FrontEnd",
+                      "access": "Allow",
+                      "priority": 180,
+                      "direction": "Outbound"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "type": "Microsoft.Insights/diagnosticSettings",
+              "apiVersion": "2021-05-01-preview",
+              "scope": "[format('Microsoft.Network/networkSecurityGroups/{0}', 'webSg')]",
+              "name": "default",
+              "properties": {
+                "workspaceId": "[parameters('logAnalyticsPayGWorkspaceId')]",
+                "logs": [
+                  {
+                    "category": "NetworkSecurityGroupEvent",
+                    "enabled": true,
+                    "retentionPolicy": {
+                      "enabled": false,
+                      "days": 0
+                    }
+                  },
+                  {
+                    "category": "NetworkSecurityGroupRuleCounter",
+                    "enabled": true,
+                    "retentionPolicy": {
+                      "enabled": false,
+                      "days": 0
+                    }
+                  }
+                ]
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', 'webSg')]"
+              ]
+            },
+            {
+              "copy": {
+                "name": "r_nics_01",
+                "count": "[length(range(0, variables('no_of_vms')))]"
+              },
+              "type": "Microsoft.Network/networkInterfaces",
+              "apiVersion": "2021-08-01",
+              "name": "[format('{0}-nic-{1}', parameters('vmName'), range(0, variables('no_of_vms'))[copyIndex()])]",
+              "location": "[parameters('deploymentParams').location]",
+              "tags": "[parameters('tags')]",
+              "properties": {
+                "ipConfigurations": [
+                  {
+                    "name": "[format('{0}-ipconfig-{1}', parameters('vmName'), range(0, variables('no_of_vms'))[copyIndex()])]",
+                    "properties": {
+                      "primary": true,
+                      "privateIPAddressVersion": "IPv4",
+                      "privateIPAllocationMethod": "Dynamic",
+                      "subnet": {
+                        "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('vmParams').vmSubnetName)]"
+                      },
+                      "applicationGatewayBackendAddressPools": "[if(parameters('add_to_appln_gw'), createArray(createObject('id', resourceId('Microsoft.Network/applicationGateways/backendAddressPools', parameters('appln_gw_name'), parameters('appln_gw_back_end_pool_name')))), null())]",
+                      "publicIPAddress": {
+                        "id": "[resourceId('Microsoft.Network/publicIPAddresses', format('{0}-pip-{1}', parameters('vmName'), range(0, variables('no_of_vms'))[range(0, variables('no_of_vms'))[copyIndex()]]))]"
+                      }
+                    }
+                  }
+                ],
+                "networkSecurityGroup": {
+                  "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'webSg')]"
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', format('{0}-pip-{1}', parameters('vmName'), range(0, variables('no_of_vms'))[range(0, variables('no_of_vms'))[copyIndex()]]))]",
+                "[resourceId('Microsoft.Network/networkSecurityGroups', 'webSg')]"
+              ]
+            },
+            {
+              "type": "Microsoft.Authorization/roleAssignments",
+              "apiVersion": "2022-04-01",
+              "scope": "[format('Microsoft.Storage/storageAccounts/{0}/blobServices/{1}/containers/{2}', split(format('{0}/default/{1}', parameters('saName'), parameters('blobContainerName')), '/')[0], split(format('{0}/default/{1}', parameters('saName'), parameters('blobContainerName')), '/')[1], split(format('{0}/default/{1}', parameters('saName'), parameters('blobContainerName')), '/')[2])]",
+              "name": "[guid('r_attach_perms_to_role_BlobOwner', resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('uami_name_vm')), parameters('blobOwnerRoleId'))]",
+              "properties": {
+                "description": "Blob Owner Permission to ResourceGroup scope",
+                "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', parameters('blobOwnerRoleId'))]",
+                "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('uami_name_vm')), '2023-01-31').principalId]",
+                "conditionVersion": "2.0",
+                "condition": "[variables('blobPermsConditionStr')]",
+                "principalType": "ServicePrincipal"
+              }
+            },
+            {
+              "type": "Microsoft.Authorization/roleAssignments",
+              "apiVersion": "2022-04-01",
+              "name": "[guid('r_attach_perms_to_role_MetricsPublisher', resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('uami_name_vm')), parameters('metricsPublisherRoleId'))]",
+              "properties": {
+                "description": "Monitoring Metrics Publisher Permission to ResourceGroup scope",
+                "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', parameters('metricsPublisherRoleId'))]",
+                "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('uami_name_vm')), '2023-01-31').principalId]",
+                "principalType": "ServicePrincipal"
+              }
+            },
+            {
+              "copy": {
+                "name": "r_vms",
+                "count": "[length(range(0, variables('no_of_vms')))]"
+              },
+              "type": "Microsoft.Compute/virtualMachines",
+              "apiVersion": "2021-11-01",
+              "name": "[format('{0}-{1}', parameters('vmName'), range(0, variables('no_of_vms'))[copyIndex()])]",
+              "location": "[parameters('deploymentParams').location]",
+              "zones": [
+                "[string(add(range(0, variables('no_of_vms'))[copyIndex()], 1))]"
+              ],
+              "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                  "[format('{0}', resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('uami_name_vm')))]": {}
+                }
+              },
+              "properties": {
+                "hardwareProfile": {
+                  "vmSize": "[parameters('vmParams').vmSize]"
+                },
+                "osProfile": {
+                  "computerName": "[format('{0}-{1}', parameters('vmName'), range(0, variables('no_of_vms'))[copyIndex()])]",
+                  "adminUsername": "[parameters('vmParams').adminUsername]",
+                  "adminPassword": "[parameters('vmParams').adminPassword.secureString]",
+                  "linuxConfiguration": "[if(equals(parameters('vmParams').authType, 'password'), null(), variables('LinuxConfiguration'))]"
+                },
+                "storageProfile": {
+                  "imageReference": "[if(equals(parameters('vmParams').isUbuntu, true()), createObject('publisher', 'Canonical', 'offer', '0001-com-ubuntu-server-jammy', 'sku', '22_04-lts-gen2', 'version', 'latest'), createObject('publisher', 'RedHat', 'offer', 'RHEL', 'sku', '91-gen2', 'version', 'latest'))]",
+                  "osDisk": {
+                    "createOption": "FromImage",
+                    "name": "[format('{0}-osDisk-{1}', parameters('vmName'), range(0, variables('no_of_vms'))[copyIndex()])]",
+                    "caching": "ReadWrite",
+                    "deleteOption": "Delete",
+                    "diskSizeGB": 128,
+                    "managedDisk": {
+                      "storageAccountType": "StandardSSD_LRS"
+                    }
+                  },
+                  "dataDisks": [
+                    {
+                      "createOption": "Empty",
+                      "name": "[format('{0}-DataDisk-{1}', parameters('vmName'), range(0, variables('no_of_vms'))[copyIndex()])]",
+                      "caching": "ReadWrite",
+                      "deleteOption": "Delete",
+                      "lun": 13,
+                      "diskSizeGB": 2,
+                      "managedDisk": {
+                        "storageAccountType": "StandardSSD_LRS"
+                      }
+                    }
+                  ]
+                },
+                "networkProfile": {
+                  "networkInterfaces": [
+                    {
+                      "id": "[resourceId('Microsoft.Network/networkInterfaces', format('{0}-nic-{1}', parameters('vmName'), range(0, variables('no_of_vms'))[copyIndex()]))]"
+                    }
+                  ]
+                },
+                "securityProfile": {},
+                "diagnosticsProfile": {
+                  "bootDiagnostics": {
+                    "enabled": false,
+                    "storageUri": "[parameters('saPrimaryEndpointsBlob')]"
+                  }
+                },
+                "userData": "[variables('userDataScript')]"
+              },
+              "dependsOn": [
+                "r_nics_01"
+              ]
+            },
+            {
+              "copy": {
+                "name": "AzureMonitorLinuxAgent",
+                "count": "[length(range(0, variables('no_of_vms')))]"
+              },
+              "condition": "[parameters('vmParams').isLinux]",
+              "type": "Microsoft.Compute/virtualMachines/extensions",
+              "apiVersion": "2021-07-01",
+              "name": "[format('{0}/{1}', format('{0}-{1}', parameters('vmName'), range(0, variables('no_of_vms'))[range(0, variables('no_of_vms'))[copyIndex()]]), 'AzureMonitorLinuxAgent')]",
+              "location": "[parameters('deploymentParams').location]",
+              "properties": {
+                "publisher": "Microsoft.Azure.Monitor",
+                "type": "AzureMonitorLinuxAgent",
+                "enableAutomaticUpgrade": true,
+                "autoUpgradeMinorVersion": true,
+                "typeHandlerVersion": "1.25",
+                "settings": {
+                  "identifier-name": "mi_res_id",
+                  "identifier-value": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('uami_name_vm'))]"
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines', format('{0}-{1}', parameters('vmName'), range(0, variables('no_of_vms'))[range(0, variables('no_of_vms'))[copyIndex()]]))]"
+              ]
+            },
+            {
+              "copy": {
+                "name": "r_associateDce_To_Vm",
+                "count": "[length(range(0, variables('no_of_vms')))]"
+              },
+              "type": "Microsoft.Insights/dataCollectionRuleAssociations",
+              "apiVersion": "2021-09-01-preview",
+              "scope": "[format('Microsoft.Compute/virtualMachines/{0}', format('{0}-{1}', parameters('vmName'), range(0, variables('no_of_vms'))[range(0, variables('no_of_vms'))[copyIndex()]]))]",
+              "name": "configurationAccessEndpoint",
+              "properties": {
+                "dataCollectionEndpointId": "[parameters('linDataCollectionEndpointId')]",
+                "description": "Send Custom logs to DCR"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines', format('{0}-{1}', parameters('vmName'), range(0, variables('no_of_vms'))[range(0, variables('no_of_vms'))[copyIndex()]]))]"
+              ]
+            },
+            {
+              "copy": {
+                "name": "r_associatestoreEventsDcr_To_Vm",
+                "count": "[length(range(0, variables('no_of_vms')))]"
+              },
+              "type": "Microsoft.Insights/dataCollectionRuleAssociations",
+              "apiVersion": "2021-09-01-preview",
+              "scope": "[format('Microsoft.Compute/virtualMachines/{0}', format('{0}-{1}', parameters('vmName'), range(0, variables('no_of_vms'))[range(0, variables('no_of_vms'))[copyIndex()]]))]",
+              "name": "[format('{0}_storeEventsDcr_{1}', parameters('vmName'), parameters('deploymentParams').global_uniqueness)]",
+              "properties": {
+                "dataCollectionRuleId": "[parameters('storeEventsDcrId')]",
+                "description": "Send Application Logs to DCR"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines', format('{0}-{1}', parameters('vmName'), range(0, variables('no_of_vms'))[range(0, variables('no_of_vms'))[copyIndex()]]))]"
+              ]
+            },
+            {
+              "copy": {
+                "name": "r_associateautomationEventsDcr_To_Vm",
+                "count": "[length(range(0, variables('no_of_vms')))]"
+              },
+              "type": "Microsoft.Insights/dataCollectionRuleAssociations",
+              "apiVersion": "2021-09-01-preview",
+              "scope": "[format('Microsoft.Compute/virtualMachines/{0}', format('{0}-{1}', parameters('vmName'), range(0, variables('no_of_vms'))[range(0, variables('no_of_vms'))[copyIndex()]]))]",
+              "name": "[format('{0}_automationEvents_{1}', parameters('vmName'), parameters('deploymentParams').global_uniqueness)]",
+              "properties": {
+                "dataCollectionRuleId": "[parameters('automationEventsDcrId')]",
+                "description": "Send Automation Logs to DCR"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines', format('{0}-{1}', parameters('vmName'), range(0, variables('no_of_vms'))[range(0, variables('no_of_vms'))[copyIndex()]]))]"
+              ]
+            }
+          ],
+          "outputs": {
+            "module_metadata": {
+              "type": "object",
+              "value": "[parameters('module_metadata')]"
+            },
+            "vmNames": {
+              "type": "array",
+              "copy": {
+                "count": "[length(range(0, variables('no_of_vms')))]",
+                "input": "[format('{0}-{1}', parameters('vmName'), range(0, variables('no_of_vms'))[range(0, variables('no_of_vms'))[copyIndex()]])]"
+              }
+            },
+            "adminUsername": {
+              "type": "string",
+              "value": "[parameters('vmParams').adminUsername]"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', format('{0}_{1}_ApplnGw', parameters('applnGwParams').applnGwNamePrefix, parameters('deploymentParams').global_uniqueness))]",
+        "[resourceId('Microsoft.Resources/deployments', format('{0}_{1}_{2}_blob', parameters('storageAccountParams').storageAccountNamePrefix, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness))]",
+        "[resourceId('Microsoft.Resources/deployments', format('{0}_{1}_Dce', parameters('dceParams').endpointNamePrefix, parameters('deploymentParams').global_uniqueness))]",
+        "[resourceId('Microsoft.Resources/deployments', format('{0}_{1}_Dcr', parameters('logAnalyticsWorkspaceParams').workspaceName, parameters('deploymentParams').global_uniqueness))]",
+        "[resourceId('Microsoft.Resources/deployments', format('{0}_{1}_{2}_la', parameters('logAnalyticsWorkspaceParams').workspaceName, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness))]",
+        "[resourceId('Microsoft.Resources/deployments', format('{0}_{1}_{2}_sa', parameters('storageAccountParams').storageAccountNamePrefix, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness))]",
+        "[resourceId('Microsoft.Resources/deployments', format('{0}_{1}_{2}_uami', parameters('deploymentParams').enterprise_name_suffix, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness))]",
+        "[resourceId('Microsoft.Resources/deployments', format('{0}_{1}_Vnet', parameters('vnetParams').vnetNamePrefix, parameters('deploymentParams').global_uniqueness))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "[format('{0}_{1}_run_cmd', parameters('vmParams').vmNamePrefix, parameters('deploymentParams').global_uniqueness)]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "deploymentParams": {
+            "value": "[parameters('deploymentParams')]"
+          },
+          "vmParams": {
+            "value": "[parameters('vmParams')]"
+          },
+          "vmNames": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}_{1}_Vm', parameters('vmParams').vmNamePrefix, parameters('deploymentParams').global_uniqueness)), '2022-09-01').outputs.vmNames.value]"
+          },
+          "repoName": {
+            "value": "[parameters('brandTags').project]"
+          },
+          "tags": {
+            "value": "[parameters('tags')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.18.4.5664",
+              "templateHash": "9842545197106448042"
+            }
+          },
+          "parameters": {
+            "module_metadata": {
+              "type": "object",
+              "defaultValue": {
+                "module_last_updated": "2023-05-19",
+                "owner": "miztiik@github"
+              }
+            },
+            "vmNames": {
+              "type": "array"
+            },
+            "deploymentParams": {
+              "type": "object"
+            },
+            "repoName": {
+              "type": "string"
+            },
+            "tags": {
+              "type": "object"
+            },
+            "vmParams": {
+              "type": "object"
+            }
+          },
+          "variables": {
+            "no_of_vms": "[parameters('vmParams').vmCount]",
+            "command_to_clone_repo_with_vars": "REPO_NAME=\"REPO_NAME_VAR\" && \\\nGIT_REPO_URL=\"https://github.com/miztiik/$REPO_NAME.git\" && \\\ncd /var && \\\nrm -rf /var/$REPO_NAME && \\\ngit clone $GIT_REPO_URL && \\\ncd /var/$REPO_NAME && \\\nchmod +x /var/$REPO_NAME/modules/vm/bootstrap_scripts/deploy_app.sh && \\\nbash /var/$REPO_NAME/modules/vm/bootstrap_scripts/deploy_app.sh &\n",
+            "command_to_clone_repo": "[replace(variables('command_to_clone_repo_with_vars'), 'REPO_NAME_VAR', parameters('repoName'))]"
+          },
+          "resources": [
+            {
+              "copy": {
+                "name": "r_deploy_script_1",
+                "count": "[length(range(0, variables('no_of_vms')))]"
+              },
+              "type": "Microsoft.Compute/virtualMachines/runCommands",
+              "apiVersion": "2022-03-01",
+              "name": "[format('{0}/{1}', parameters('vmNames')[range(0, variables('no_of_vms'))[copyIndex()]], format('{0}_{1}_script_1', parameters('deploymentParams').enterprise_name_suffix, parameters('deploymentParams').global_uniqueness))]",
+              "location": "[parameters('deploymentParams').location]",
+              "tags": "[parameters('tags')]",
+              "properties": {
+                "asyncExecution": false,
+                "source": {
+                  "script": "[variables('command_to_clone_repo')]"
+                }
+              }
+            }
+          ],
+          "outputs": {
+            "module_metadata": {
+              "type": "object",
+              "value": "[parameters('module_metadata')]"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', format('{0}_{1}_Vm', parameters('vmParams').vmNamePrefix, parameters('deploymentParams').global_uniqueness))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "[format('{0}_{1}_ApplnGw', parameters('applnGwParams').applnGwNamePrefix, parameters('deploymentParams').global_uniqueness)]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "deploymentParams": {
+            "value": "[parameters('deploymentParams')]"
+          },
+          "applnGwParams": {
+            "value": "[parameters('applnGwParams')]"
+          },
+          "tags": {
+            "value": "[parameters('tags')]"
+          },
+          "vnetName": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}_{1}_Vnet', parameters('vnetParams').vnetNamePrefix, parameters('deploymentParams').global_uniqueness)), '2022-09-01').outputs.vnetName.value]"
+          },
+          "logAnalyticsPayGWorkspaceId": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}_{1}_{2}_la', parameters('logAnalyticsWorkspaceParams').workspaceName, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness)), '2022-09-01').outputs.logAnalyticsPayGWorkspaceId.value]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.18.4.5664",
+              "templateHash": "3409948092078901254"
+            }
+          },
+          "parameters": {
+            "module_metadata": {
+              "type": "object",
+              "defaultValue": {
+                "module_last_updated": "2023-05-19",
+                "owner": "miztiik@github"
+              }
+            },
+            "deploymentParams": {
+              "type": "object"
+            },
+            "applnGwParams": {
+              "type": "object"
+            },
+            "tags": {
+              "type": "object"
+            },
+            "logAnalyticsPayGWorkspaceId": {
+              "type": "string"
+            },
+            "vnetName": {
+              "type": "string"
+            }
+          },
+          "variables": {
+            "appln_gw_front_end_name": "m-front-end",
+            "appln_gw_back_end_pool_name": "m-back-end-pool",
+            "appln_gw_name": "[replace(format('{0}-{1}-appln-gw-{2}-{3}', parameters('applnGwParams').applnGwNamePrefix, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').enterprise_name_suffix, parameters('deploymentParams').global_uniqueness), '_', '-')]"
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Network/publicIPAddresses",
+              "apiVersion": "2021-08-01",
+              "name": "[format('{0}-pip', variables('appln_gw_name'))]",
+              "location": "[parameters('deploymentParams').location]",
+              "sku": {
+                "name": "Standard"
+              },
+              "properties": {
+                "publicIPAddressVersion": "IPv4",
+                "publicIPAllocationMethod": "Static"
+              }
+            },
+            {
+              "type": "Microsoft.Network/applicationGateways",
+              "apiVersion": "2021-05-01",
+              "name": "[variables('appln_gw_name')]",
+              "location": "[parameters('deploymentParams').location]",
+              "tags": "[parameters('tags')]",
+              "properties": {
+                "sku": {
+                  "name": "WAF_v2",
+                  "tier": "WAF_v2"
+                },
+                "gatewayIPConfigurations": [
+                  {
+                    "name": "appGatewayIpConfig",
+                    "properties": {
+                      "subnet": {
+                        "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('applnGwParams').appGWSubnetName)]"
+                      }
+                    }
+                  }
+                ],
+                "frontendIPConfigurations": [
+                  {
+                    "name": "[variables('appln_gw_front_end_name')]",
+                    "properties": {
+                      "privateIPAllocationMethod": "Dynamic",
+                      "publicIPAddress": {
+                        "id": "[resourceId('Microsoft.Network/publicIPAddresses', format('{0}-pip', variables('appln_gw_name')))]"
+                      }
+                    }
+                  }
+                ],
+                "frontendPorts": [
+                  {
+                    "name": "port_80",
+                    "properties": {
+                      "port": 80
+                    }
+                  }
+                ],
+                "backendAddressPools": [
+                  {
+                    "name": "[variables('appln_gw_back_end_pool_name')]",
+                    "properties": {}
+                  }
+                ],
+                "backendHttpSettingsCollection": [
+                  {
+                    "name": "HTTPSetting",
+                    "properties": {
+                      "port": 80,
+                      "protocol": "Http",
+                      "cookieBasedAffinity": "Disabled",
+                      "pickHostNameFromBackendAddress": false,
+                      "requestTimeout": 20
+                    }
+                  }
+                ],
+                "httpListeners": [
+                  {
+                    "name": "listener-http",
+                    "properties": {
+                      "frontendIPConfiguration": {
+                        "id": "[resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations', variables('appln_gw_name'), variables('appln_gw_front_end_name'))]"
+                      },
+                      "frontendPort": {
+                        "id": "[resourceId('Microsoft.Network/applicationGateways/frontendPorts', variables('appln_gw_name'), 'port_80')]"
+                      },
+                      "protocol": "Http",
+                      "requireServerNameIndication": false
+                    }
+                  }
+                ],
+                "requestRoutingRules": [
+                  {
+                    "name": "m-RoutingRule",
+                    "properties": {
+                      "ruleType": "Basic",
+                      "httpListener": {
+                        "id": "[resourceId('Microsoft.Network/applicationGateways/httpListeners', variables('appln_gw_name'), 'listener-http')]"
+                      },
+                      "backendAddressPool": {
+                        "id": "[resourceId('Microsoft.Network/applicationGateways/backendAddressPools', variables('appln_gw_name'), variables('appln_gw_back_end_pool_name'))]"
+                      },
+                      "backendHttpSettings": {
+                        "id": "[resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', variables('appln_gw_name'), 'HTTPSetting')]"
+                      }
+                    }
+                  }
+                ],
+                "probes": [
+                  {
+                    "name": "probe_80",
+                    "properties": {
+                      "protocol": "Http",
+                      "path": "/",
+                      "interval": 30,
+                      "timeout": 30,
+                      "unhealthyThreshold": 3,
+                      "pickHostNameFromBackendHttpSettings": true,
+                      "minServers": 0,
+                      "match": {}
+                    }
+                  }
+                ],
+                "enableHttp2": false,
+                "autoscaleConfiguration": {
+                  "minCapacity": 1,
+                  "maxCapacity": 10
+                },
+                "firewallPolicy": {
+                  "id": "[resourceId('Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies', format('{0}-fw-policy', variables('appln_gw_name')))]"
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies', format('{0}-fw-policy', variables('appln_gw_name')))]",
+                "[resourceId('Microsoft.Network/publicIPAddresses', format('{0}-pip', variables('appln_gw_name')))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies",
+              "apiVersion": "2021-08-01",
+              "name": "[format('{0}-fw-policy', variables('appln_gw_name'))]",
+              "location": "[parameters('deploymentParams').location]",
+              "properties": {
+                "policySettings": {
+                  "requestBodyCheck": true,
+                  "maxRequestBodySizeInKb": 128,
+                  "fileUploadLimitInMb": 100,
+                  "state": "Enabled",
+                  "mode": "Detection"
+                },
+                "customRules": [
+                  {
+                    "name": "miztRule19",
+                    "priority": 5,
+                    "ruleType": "MatchRule",
+                    "action": "Allow",
+                    "matchConditions": [
+                      {
+                        "matchVariables": [
+                          {
+                            "variableName": "RemoteAddr"
+                          }
+                        ],
+                        "operator": "IPMatch",
+                        "negationConditon": true,
+                        "matchValues": [
+                          "10.10.10.0/24"
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "managedRules": {
+                  "managedRuleSets": [
+                    {
+                      "ruleSetType": "OWASP",
+                      "ruleSetVersion": "3.1"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "type": "Microsoft.Insights/diagnosticSettings",
+              "apiVersion": "2021-05-01-preview",
+              "scope": "[format('Microsoft.Network/applicationGateways/{0}', variables('appln_gw_name'))]",
+              "name": "[format('{0}_diag', variables('appln_gw_name'))]",
+              "properties": {
+                "workspaceId": "[parameters('logAnalyticsPayGWorkspaceId')]",
+                "logs": [
+                  {
+                    "category": "ApplicationGatewayAccessLog",
+                    "enabled": true,
+                    "retentionPolicy": {
+                      "days": 90,
+                      "enabled": true
+                    }
+                  },
+                  {
+                    "category": "ApplicationGatewayPerformanceLog",
+                    "enabled": true,
+                    "retentionPolicy": {
+                      "days": 90,
+                      "enabled": true
+                    }
+                  },
+                  {
+                    "category": "ApplicationGatewayFirewallLog",
+                    "enabled": true,
+                    "retentionPolicy": {
+                      "days": 90,
+                      "enabled": true
+                    }
+                  }
+                ],
+                "metrics": [
+                  {
+                    "category": "AllMetrics",
+                    "timeGrain": "PT5M",
+                    "enabled": true,
+                    "retentionPolicy": {
+                      "enabled": false,
+                      "days": 0
+                    }
+                  }
+                ]
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/applicationGateways', variables('appln_gw_name'))]"
+              ]
+            }
+          ],
+          "outputs": {
+            "module_metadata": {
+              "type": "object",
+              "value": "[parameters('module_metadata')]"
+            },
+            "appln_gw_name": {
+              "type": "string",
+              "value": "[variables('appln_gw_name')]"
+            },
+            "appln_gw_front_end_name": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Network/applicationGateways', variables('appln_gw_name')), '2021-05-01').frontendIPConfigurations[0].name]"
+            },
+            "appln_gw_back_end_pool_name": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Network/applicationGateways', variables('appln_gw_name')), '2021-05-01').backendAddressPools[0].name]"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', format('{0}_{1}_{2}_la', parameters('logAnalyticsWorkspaceParams').workspaceName, parameters('deploymentParams').loc_short_code, parameters('deploymentParams').global_uniqueness))]",
+        "[resourceId('Microsoft.Resources/deployments', format('{0}_{1}_Vnet', parameters('vnetParams').vnetNamePrefix, parameters('deploymentParams').global_uniqueness))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "[format('{0}_{1}_attach_vm_to_app_gw_pools', parameters('vmParams').vmNamePrefix, parameters('deploymentParams').global_uniqueness)]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "deploymentParams": {
+            "value": "[parameters('deploymentParams')]"
+          },
+          "appln_gw_name": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}_{1}_ApplnGw', parameters('applnGwParams').applnGwNamePrefix, parameters('deploymentParams').global_uniqueness)), '2022-09-01').outputs.appln_gw_name.value]"
+          },
+          "vmNames": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}_{1}_Vm', parameters('vmParams').vmNamePrefix, parameters('deploymentParams').global_uniqueness)), '2022-09-01').outputs.vmNames.value]"
+          },
+          "tags": {
+            "value": "[parameters('tags')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.18.4.5664",
+              "templateHash": "4977413773416895442"
+            }
+          },
+          "parameters": {
+            "module_metadata": {
+              "type": "object",
+              "defaultValue": {
+                "module_last_updated": "2023-05-19",
+                "owner": "miztiik@github"
+              }
+            },
+            "deploymentParams": {
+              "type": "object"
+            },
+            "appln_gw_name": {
+              "type": "string"
+            },
+            "tags": {
+              "type": "object"
+            },
+            "vmNames": {
+              "type": "array"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Resources/deploymentScripts",
+              "apiVersion": "2020-10-01",
+              "name": "attachVMsToAppGatewayBackendPool",
+              "location": "[parameters('deploymentParams').location]",
+              "tags": "[parameters('tags')]",
+              "kind": "AzureCLI",
+              "properties": {
+                "azCliVersion": "2.37.0",
+                "timeout": "PT30M",
+                "cleanupPreference": "OnSuccess",
+                "retentionInterval": "P1D",
+                "arguments": "[format('-vmNames \"{0}\" -appln_gw_name \"{1}\" -resourceGroupName \"{2}\"', string(parameters('vmNames')), parameters('appln_gw_name'), resourceGroup().name)]",
+                "scriptContent": "      #!/bin/bash\r\n\r\n      while getopts \"vmNames:appln_gw_name:resourceGroupName:\" opt; do\r\n        case $opt in\r\n          vmNames) vmNames=$OPTARG;;\r\n          appln_gw_name) appln_gw_name=$OPTARG;;\r\n          resourceGroupName) resourceGroupName=$OPTARG;;\r\n        esac\r\n      done\r\n\r\n      appGw=$(az network application-gateway show --name $appln_gw_name --resource-group $resourceGroupName --query \"id\" -o tsv)\r\n      appGwPoolId=$(az network application-gateway address-pool show --gateway-name $appln_gw_name --name \"appGatewayBackendPool\" --resource-group $resourceGroupName --query \"id\" -o tsv)\r\n\r\n      IFS=', ' read -r -a vmNamesArray <<< \"$vmNames\"\r\n      for vmName in \"${vmNamesArray[@]}\"; do\r\n        nicId=$(az vm show --name $vmName --resource-group $resourceGroupName --query \"networkProfile.networkInterfaces[0].id\" -o tsv)\r\n        az network nic ip-config update --name \"ipconfig1\" --nic-name $nicId --application-gateway-backend-address-pools $appGwPoolId\r\n      done\r\n    "
+              }
+            }
+          ],
+          "outputs": {
+            "module_metadata": {
+              "type": "object",
+              "value": "[parameters('module_metadata')]"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', format('{0}_{1}_ApplnGw', parameters('applnGwParams').applnGwNamePrefix, parameters('deploymentParams').global_uniqueness))]",
+        "[resourceId('Microsoft.Resources/deployments', format('{0}_{1}_Vm', parameters('vmParams').vmNamePrefix, parameters('deploymentParams').global_uniqueness))]"
+      ]
+    }
+  ]
+}
